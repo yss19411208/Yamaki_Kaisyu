@@ -2,154 +2,223 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>改修ツリーUI 強化版</title>
+<title>改修ツリー完全版</title>
+
 <style>
-body { font-family: sans-serif; margin:0; display:flex; flex-direction:column; }
+body { font-family: sans-serif; margin:0; }
 
-header { padding:10px; background:#222; color:white; }
+header {
+  background:#222;
+  color:white;
+  padding:10px;
+}
 
-main { display:flex; height:80vh; }
+#container {
+  display:flex;
+  height:85vh;
+}
 
-#left { width:250px; border-right:1px solid #ccc; overflow:auto; }
-#center { flex:1; padding:10px; overflow:auto; }
-#right { width:300px; border-left:1px solid #ccc; padding:10px; }
+#left {
+  width:280px;
+  border-right:1px solid #ccc;
+  overflow:auto;
+  padding:10px;
+}
 
-.item { padding:5px; cursor:pointer; }
-.item:hover { background:#eee; }
+#center {
+  flex:1;
+  padding:20px;
+  overflow:auto;
+}
 
 .node {
-  border-radius:6px;
+  text-align:center;
+  border-radius:8px;
   padding:10px;
-  margin:10px;
+  margin:20px auto;
+  width:320px;
   color:white;
+  position:relative;
 }
 
-.star0 { background:#2196f3; } /* 青 */
-.star6 { background:#9c27b0; } /* 紫 */
-.star10{ background:#f44336; } /* 赤 */
+.star0 { background:#2196f3; }
+.star6 { background:#9c27b0; }
+.star10{ background:#f44336; }
+
+.line {
+  width:2px;
+  height:30px;
+  background:#999;
+  margin:auto;
+}
 
 .days span {
-  display:inline-block;
-  width:20px;
-  text-align:center;
-  margin:2px;
+  margin:1px;
+  padding:3px;
+  font-size:10px;
 }
 
-.on { background:#4caf50; color:white; }
-.off { background:#ccc; }
+.on { background:#4caf50; }
+.off{ background:#ccc; }
 
 #materials {
-  border-top:1px solid #ccc;
+  border-top:2px solid #333;
   padding:10px;
 }
+
+.item { cursor:pointer; padding:5px; }
+.item:hover { background:#eee; }
+
 </style>
 </head>
+
 <body>
 
 <header>
-検索 <input id="search">
+装備選択
+<select id="category"></select>
+<select id="equip"></select>
+
 曜日
-<span id="dayFilter"></span>
+<span id="filter"></span>
 </header>
 
-<main>
-<div id="left"><h3>装備</h3><div id="list"></div></div>
-<div id="center"><h3>ツリー</h3><div id="tree"></div></div>
-<div id="right"><h3>詳細</h3><div id="detail"></div></div>
-</main>
+<div id="container">
+<div id="center"></div>
+</div>
 
 <div id="materials"><h3>素材合計</h3><div id="total"></div></div>
 
 <script>
 
-const DAYS = ["日","月","火","水","木","金","土"];
-let DAY_FILTER = [1,1,1,1,1,1,1];
+const DAYS=["日","月","火","水","木","金","土"];
+let DAY_FILTER=[1,1,1,1,1,1,1];
+let DATA;
 
 // 曜日UI
 DAYS.forEach((d,i)=>{
-  const span=document.createElement("span");
-  span.textContent=d;
-  span.className="on";
-  span.onclick=()=>{
+  const s=document.createElement("span");
+  s.textContent=d;
+  s.className="on";
+  s.onclick=()=>{
     DAY_FILTER[i]=1-DAY_FILTER[i];
-    span.className = DAY_FILTER[i]? "on":"off";
+    s.className=DAY_FILTER[i]?"on":"off";
   };
-  document.getElementById("dayFilter").appendChild(span);
+  document.getElementById("filter").appendChild(s);
 });
 
-// JSON読み込み
-fetch("kaisyu.json").then(r=>r.json()).then(data=>init(data));
+// JSON
+fetch("kaisyu.json")
+.then(r=>r.json())
+.then(d=>{
+  DATA=d;
+  init();
+});
 
-function init(data){
-  const list=[];
-  for(const c in data){
-    for(const n in data[c]){
-      const info=data[c][n].info;
-      if(info["10"] && info["10"].some(x=>x.result)){
-        list.push(n);
-      }
-    }
-  }
+function init(){
 
-  const listDiv=document.getElementById("list");
-  list.forEach(n=>{
-    const div=document.createElement("div");
-    div.textContent=n;
-    div.className="item";
-    div.onclick=()=>render(n,data);
-    listDiv.appendChild(div);
+  const catSel=document.getElementById("category");
+  const eqSel=document.getElementById("equip");
+
+  // カテゴリ
+  Object.keys(DATA).forEach(c=>{
+    const opt=new Option(c,c);
+    catSel.add(opt);
   });
+
+  catSel.onchange=()=>{
+    eqSel.innerHTML="";
+    Object.keys(DATA[catSel.value]).forEach(n=>{
+      const eq=DATA[catSel.value][n];
+      if(eq.info["10"] && eq.info["10"].some(r=>r.result)){
+        eqSel.add(new Option(n,n));
+      }
+    });
+  };
+
+  catSel.onchange();
+
+  eqSel.onchange=()=>render(eqSel.value);
 }
 
-function render(name,data){
+// 描画
+function render(name){
 
-  const eq=find(name,data);
-  const tree=document.getElementById("tree");
-  tree.innerHTML="";
+  const eq=find(name);
+  const container=document.getElementById("center");
+  container.innerHTML="";
   total={};
 
-  renderStage(tree,name,eq.info["0"],"star0");
-  renderStage(tree,name,eq.info["6"],"star6");
-  renderStage(tree,name,eq.info["10"],"star10",true);
+  drawStage(container, name, eq.info["10"], "star10", true);
+  line(container);
+  drawStage(container, name, eq.info["6"], "star6");
+  line(container);
+  drawStage(container, name, eq.info["0"], "star0");
 
   renderTotal();
 }
 
-let total={};
+// レシピを統合
+function mergeRecipes(list){
 
-function renderStage(tree,name,list,cls,isUpdate=false){
-
-  if(!list)return;
+  const map={};
 
   list.forEach(r=>{
+    const key=JSON.stringify({
+      soubi:r.soubi,
+      kaihatu:r.kaihatu,
+      kaisyu:r.kaisyu
+    });
+
+    if(!map[key]){
+      map[key]={...r, ship:[...r.ship]};
+    }else{
+      map[key].ship.push(...r.ship);
+    }
+  });
+
+  return Object.values(map);
+}
+
+// ステージ描画
+function drawStage(container, name, list, cls, isUpdate=false){
+
+  if(!list) return;
+
+  const merged=mergeRecipes(list);
+
+  merged.forEach(r=>{
+
     if(!matchDay(r.youbi)) return;
 
     const div=document.createElement("div");
     div.className="node "+cls;
 
     let mats="";
-    if(r.soubi){
-      r.soubi.forEach(s=>{
-        mats+=`${s[0]}×${s[1]} `;
-        total[s[0]]=(total[s[0]]||0)+s[1];
-      });
-    }
+    (r.soubi||[]).forEach(s=>{
+      mats+=`${s[0]}×${s[1]} `;
+      total[s[0]]=(total[s[0]]||0)+s[1];
+    });
 
     div.innerHTML=`
       <b>${name}</b><br>
-      艦: ${r.ship.join(",")}<br>
+      艦: ${unique(r.ship).join(" / ")}<br>
       素材: ${mats}<br>
-      ${isUpdate? "<b>→ "+r.result+"</b>":""}
-      <div class="days">${renderDays(r.youbi)}</div>
+      ${isUpdate ? "→ "+r.result : ""}
+      <div class="days">${days(r.youbi)}</div>
     `;
 
-    tree.appendChild(div);
-
-    div.onclick=()=>detail(r,name);
+    container.appendChild(div);
   });
 }
 
-function renderDays(arr){
+function line(container){
+  const l=document.createElement("div");
+  l.className="line";
+  container.appendChild(l);
+}
+
+function days(arr){
   return arr.map((v,i)=>`<span class="${v?'on':'off'}">${DAYS[i]}</span>`).join("");
 }
 
@@ -157,28 +226,25 @@ function matchDay(arr){
   return arr.some((v,i)=>v && DAY_FILTER[i]);
 }
 
-function detail(r,name){
-  document.getElementById("detail").innerHTML=`
-    <h4>${name}</h4>
-    艦: ${r.ship.join(",")}<br>
-    必要素材:<br>
-    ${(r.soubi||[]).map(s=>`${s[0]}×${s[1]}`).join("<br>")}
-  `;
-}
+let total={};
 
 function renderTotal(){
-  const div=document.getElementById("total");
-  div.innerHTML=Object.entries(total)
-    .map(([k,v])=>`${k} × ${v}`)
-    .join("<br>");
+  document.getElementById("total").innerHTML=
+  Object.entries(total)
+  .map(([k,v])=>`${k} × ${v}`)
+  .join("<br>");
 }
 
-function find(name,data){
-  for(const c in data){
-    if(data[c][name]) return data[c][name];
+function unique(arr){
+  return Array.from(new Set(arr));
+}
+
+function find(name){
+  for(const c in DATA){
+    if(DATA[c][name]) return DATA[c][name];
   }
 }
-</script>
 
+</script>
 </body>
 </html>
