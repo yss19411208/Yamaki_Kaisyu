@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>改修ツリーUI 強化版</title>
+<style>
+body { font-family: sans-serif; margin:0; display:flex; flex-direction:column; }
+
+header { padding:10px; background:#222; color:white; }
+
+main { display:flex; height:80vh; }
+
+#left { width:250px; border-right:1px solid #ccc; overflow:auto; }
+#center { flex:1; padding:10px; overflow:auto; }
+#right { width:300px; border-left:1px solid #ccc; padding:10px; }
+
+.item { padding:5px; cursor:pointer; }
+.item:hover { background:#eee; }
+
+.node {
+  border-radius:6px;
+  padding:10px;
+  margin:10px;
+  color:white;
+}
+
+.star0 { background:#2196f3; } /* 青 */
+.star6 { background:#9c27b0; } /* 紫 */
+.star10{ background:#f44336; } /* 赤 */
+
+.days span {
+  display:inline-block;
+  width:20px;
+  text-align:center;
+  margin:2px;
+}
+
+.on { background:#4caf50; color:white; }
+.off { background:#ccc; }
+
+#materials {
+  border-top:1px solid #ccc;
+  padding:10px;
+}
+</style>
+</head>
+<body>
+
+<header>
+検索 <input id="search">
+曜日
+<span id="dayFilter"></span>
+</header>
+
+<main>
+<div id="left"><h3>装備</h3><div id="list"></div></div>
+<div id="center"><h3>ツリー</h3><div id="tree"></div></div>
+<div id="right"><h3>詳細</h3><div id="detail"></div></div>
+</main>
+
+<div id="materials"><h3>素材合計</h3><div id="total"></div></div>
+
+<script>
+
+const DAYS = ["日","月","火","水","木","金","土"];
+let DAY_FILTER = [1,1,1,1,1,1,1];
+
+// 曜日UI
+DAYS.forEach((d,i)=>{
+  const span=document.createElement("span");
+  span.textContent=d;
+  span.className="on";
+  span.onclick=()=>{
+    DAY_FILTER[i]=1-DAY_FILTER[i];
+    span.className = DAY_FILTER[i]? "on":"off";
+  };
+  document.getElementById("dayFilter").appendChild(span);
+});
+
+// JSON読み込み
+fetch("kaisyu.json").then(r=>r.json()).then(data=>init(data));
+
+function init(data){
+  const list=[];
+  for(const c in data){
+    for(const n in data[c]){
+      const info=data[c][n].info;
+      if(info["10"] && info["10"].some(x=>x.result)){
+        list.push(n);
+      }
+    }
+  }
+
+  const listDiv=document.getElementById("list");
+  list.forEach(n=>{
+    const div=document.createElement("div");
+    div.textContent=n;
+    div.className="item";
+    div.onclick=()=>render(n,data);
+    listDiv.appendChild(div);
+  });
+}
+
+function render(name,data){
+
+  const eq=find(name,data);
+  const tree=document.getElementById("tree");
+  tree.innerHTML="";
+  total={};
+
+  renderStage(tree,name,eq.info["0"],"star0");
+  renderStage(tree,name,eq.info["6"],"star6");
+  renderStage(tree,name,eq.info["10"],"star10",true);
+
+  renderTotal();
+}
+
+let total={};
+
+function renderStage(tree,name,list,cls,isUpdate=false){
+
+  if(!list)return;
+
+  list.forEach(r=>{
+    if(!matchDay(r.youbi)) return;
+
+    const div=document.createElement("div");
+    div.className="node "+cls;
+
+    let mats="";
+    if(r.soubi){
+      r.soubi.forEach(s=>{
+        mats+=`${s[0]}×${s[1]} `;
+        total[s[0]]=(total[s[0]]||0)+s[1];
+      });
+    }
+
+    div.innerHTML=`
+      <b>${name}</b><br>
+      艦: ${r.ship.join(",")}<br>
+      素材: ${mats}<br>
+      ${isUpdate? "<b>→ "+r.result+"</b>":""}
+      <div class="days">${renderDays(r.youbi)}</div>
+    `;
+
+    tree.appendChild(div);
+
+    div.onclick=()=>detail(r,name);
+  });
+}
+
+function renderDays(arr){
+  return arr.map((v,i)=>`<span class="${v?'on':'off'}">${DAYS[i]}</span>`).join("");
+}
+
+function matchDay(arr){
+  return arr.some((v,i)=>v && DAY_FILTER[i]);
+}
+
+function detail(r,name){
+  document.getElementById("detail").innerHTML=`
+    <h4>${name}</h4>
+    艦: ${r.ship.join(",")}<br>
+    必要素材:<br>
+    ${(r.soubi||[]).map(s=>`${s[0]}×${s[1]}`).join("<br>")}
+  `;
+}
+
+function renderTotal(){
+  const div=document.getElementById("total");
+  div.innerHTML=Object.entries(total)
+    .map(([k,v])=>`${k} × ${v}`)
+    .join("<br>");
+}
+
+function find(name,data){
+  for(const c in data){
+    if(data[c][name]) return data[c][name];
+  }
+}
+</script>
+
+</body>
+</html>
