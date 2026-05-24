@@ -2,13 +2,13 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>改修ルート最適UI</title>
+<title>改修ルート（完成版）</title>
 
 <style>
 body{
   margin:0;
   font-family:sans-serif;
-  background:#0f172a;
+  background:#0b1020;
   color:white;
 }
 
@@ -20,7 +20,14 @@ header{
   gap:10px;
 }
 
-/* メイン */
+/* 統計 */
+#summary{
+  padding:15px;
+  background:#020617;
+  border-bottom:2px solid #333;
+}
+
+/* 本体 */
 #main{
   display:flex;
   flex-direction:column;
@@ -28,45 +35,30 @@ header{
   padding:20px;
 }
 
-/* ツリー */
-.tree{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-/* 各ノード */
+/* ノード */
 .node{
-  width:420px;
+  width:450px;
   background:#1e293b;
   border-radius:12px;
   padding:15px;
   margin:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.5);
+  box-shadow:0 4px 12px rgba(0,0,0,0.5);
 }
 
-.node h3{
-  margin:0 0 10px 0;
+.title{
+  font-size:18px;
+  margin-bottom:8px;
 }
 
 /* 矢印 */
 .arrow{
-  font-size:24px;
+  font-size:22px;
 }
 
 /* 更新 */
 .update{
   color:#facc15;
   font-weight:bold;
-}
-
-/* 合計 */
-.summary{
-  width:420px;
-  background:#020617;
-  margin-top:20px;
-  padding:15px;
-  border-radius:10px;
 }
 </style>
 
@@ -79,8 +71,8 @@ header{
 <select id="eq"></select>
 </header>
 
-<div id="main"></div>
 <div id="summary"></div>
+<div id="main"></div>
 
 <script>
 
@@ -103,7 +95,7 @@ function init(){
   c.onchange=()=>{
     e.innerHTML="";
     Object.keys(DATA[c.value]).forEach(n=>{
-      let eq=DATA[c.value][n];
+      const eq=DATA[c.value][n];
       if(eq.info["10"] && eq.info["10"].some(r=>r.result)){
         e.add(new Option(n,n));
       }
@@ -118,105 +110,115 @@ function init(){
   };
 }
 
-/* 描画 */
+// 描画
 function render(){
 
   const eq=find(current);
+
   const main=document.getElementById("main");
   main.innerHTML="";
 
   totalMat={};
   totalRes=[0,0,0,0];
+  totalShip=new Set();
 
-  const tree=document.createElement("div");
-  tree.className="tree";
-
-  // 上から
-  draw(tree, eq, "10", "★10 → 更新", true);
-  arrow(tree);
-  draw(tree, eq, "6", "★6 → ★9");
-  arrow(tree);
-  draw(tree, eq, "0", "★0 → ★5");
-
-  main.appendChild(tree);
+  // 上に統計出すため先計算
+  calc(eq,"0",6);
+  calc(eq,"6",4);
+  calc(eq,"10",1);
 
   renderSummary();
+
+  // ツリー
+  draw(eq,"10","★10（1回）",true);
+  arrow();
+  draw(eq,"6","★6 → ★9（4回）");
+  arrow();
+  draw(eq,"0","★0 → ★5（6回）");
 }
 
-/* ステージ描画 */
-function draw(root, eq, key, title, isUpdate=false){
+// 計算
+function calc(eq,key,count){
 
   const list=merge(eq.info[key]);
   if(!list) return;
 
   list.forEach(r=>{
 
-    const node=document.createElement("div");
-    node.className="node";
-
-    // 回数
-    let count = 0;
-    if(key==="0") count=6;
-    if(key==="6") count=4;
-    if(key==="10") count=1;
-
-    // 素材
-    let mats="";
     (r.soubi||[]).forEach(s=>{
-      mats+=`${s[0]}×${s[1]*count} `;
       totalMat[s[0]]=(totalMat[s[0]]||0)+s[1]*count;
     });
 
-    // 資源（回数分）
-    let res = eq.resource.map(v=>v*count);
-    res.forEach((v,i)=> totalRes[i]+=v);
+    if(eq.resource){
+      eq.resource.forEach((v,i)=>{
+        totalRes[i]+=v*count;
+      });
+    }
 
-    node.innerHTML=`
-      <h3>${title}</h3>
-      回数：${count}<br>
-      艦：${uniq(r.ship)}<br>
-      素材：${mats}<br>
-      資源：${res.join(" / ")}<br>
-      ${isUpdate && r.result ? `<div class="update">更新 → ${r.result}</div>`:""}
-    `;
-
-    root.appendChild(node);
+    r.ship.forEach(s=> totalShip.add(s));
   });
 }
 
-/* 矢印 */
-function arrow(root){
-  const a=document.createElement("div");
-  a.className="arrow";
-  a.textContent="↑";
-  root.appendChild(a);
+// ノード描画
+function draw(eq,key,label,isUpdate=false){
+
+  const list=merge(eq.info[key]);
+  if(!list) return;
+
+  list.forEach(r=>{
+
+    const div=document.createElement("div");
+    div.className="node";
+
+    let mats = (r.soubi||[])
+      .map(s=>`${s[0]}×${s[1]}`)
+      .join(" ");
+
+    div.innerHTML=`
+      <div class="title">${label}</div>
+      艦: ${uniq(r.ship)}<br>
+      素材（1回）: ${mats}<br>
+      ${isUpdate && r.result ? `<div class="update">更新 → ${r.result}</div>`:""}
+    `;
+
+    document.getElementById("main").appendChild(div);
+  });
 }
 
-/* 合計 */
+function arrow(){
+  const div=document.createElement("div");
+  div.className="arrow";
+  div.textContent="↓";
+  document.getElementById("main").appendChild(div);
+}
+
+// 統計表示（上）
 function renderSummary(){
 
-  let m=Object.entries(totalMat)
-    .map(([k,v])=>`${k} × ${v}`).join("<br>");
+  let mat = Object.entries(totalMat)
+    .map(([k,v])=>`${k} × ${v}`)
+    .join("<br>");
 
-  let r=`
-    燃料 ${totalRes[0]}<br>
-    弾薬 ${totalRes[1]}<br>
-    鋼材 ${totalRes[2]}<br>
+  let res = `
+    燃料 ${totalRes[0]} /
+    弾薬 ${totalRes[1]} /
+    鋼材 ${totalRes[2]} /
     ボーキ ${totalRes[3]}
   `;
 
+  let ship=[...totalShip].join(" / ");
+
   document.getElementById("summary").innerHTML=`
-    <div class="summary">
-      <h3>合計</h3>
-      <b>素材</b><br>${m}<br><br>
-      <b>資源</b><br>${r}
-    </div>
+    <b>総コスト</b><br><br>
+    素材:<br>${mat}<br><br>
+    資源:<br>${res}<br><br>
+    必要艦:<br>${ship}
   `;
 }
 
-/* ユーティリティ */
+// utils
 function merge(list){
-  if(!list) return;
+  if(!list)return;
   const m={};
   list.forEach(r=>{
     const k=JSON.stringify(r.soubi);
