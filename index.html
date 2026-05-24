@@ -2,243 +2,842 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>改修ルート（完成版）</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>改修更新ツリー</title>
 <style>
-body{
-  margin:0;
-  font-family:sans-serif;
-  background:#0b1020;
-  color:white;
+:root{
+  --bg:#0b0f1a;--surface:#111827;--surface2:#1a2233;--surface3:#222d40;
+  --border:#2a3a55;--text:#c8d6e8;--muted:#5a7090;--accent:#4fa3e0;
+  --gold:#f0c040;--red:#e05050;--green:#50d090;--orange:#e08840;
+  --star:#f0c040;--white:#e8f0ff;
+  --r0:#4a8fc8;--r1:#4a8fc8;--r2:#70a870;--r3:#d4a040;
 }
-
-/* ヘッダー */
-header{
-  padding:10px;
-  background:#020617;
-  display:flex;
-  gap:10px;
-}
-
-/* 統計 */
-#summary{
-  padding:15px;
-  background:#020617;
-  border-bottom:2px solid #333;
-}
-
-/* 本体 */
-#main{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:20px;
-}
-
-/* ノード */
-.node{
-  width:450px;
-  background:#1e293b;
-  border-radius:12px;
-  padding:15px;
-  margin:10px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.5);
-}
-
-.title{
-  font-size:18px;
-  margin-bottom:8px;
-}
-
-/* 矢印 */
-.arrow{
-  font-size:22px;
-}
-
-/* 更新 */
-.update{
-  color:#facc15;
-  font-weight:bold;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic UI',sans-serif;font-size:13px;min-height:100vh;overflow-x:hidden}
+/* LAYOUT */
+.app{display:flex;flex-direction:column;height:100vh}
+.header{background:linear-gradient(135deg,#0d1a2e,#1a2a44);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.header h1{font-size:16px;font-weight:700;color:var(--gold);letter-spacing:.05em}
+.header .sub{font-size:11px;color:var(--muted)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:.3s}
+.status-dot.ok{background:var(--green)}
+.body{display:flex;flex:1;overflow:hidden}
+/* SIDEBAR */
+.sidebar{width:300px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-section{padding:10px 12px;border-bottom:1px solid var(--border)}
+.sidebar-section label{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-weight:700}
+/* Day filter */
+.day-btns{display:flex;gap:4px;flex-wrap:wrap}
+.day-btn{padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:12px;font-family:inherit;transition:.15s}
+.day-btn:hover{border-color:var(--accent);color:var(--accent)}
+.day-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.day-btn.active.d0,.day-btn.active.d6{background:#c04040;border-color:#c04040}
+/* Search */
+.search-box{width:100%;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:.15s}
+.search-box:focus{border-color:var(--accent)}
+/* Category filter */
+.cat-chips{display:flex;gap:4px;flex-wrap:wrap}
+.cat-chip{padding:3px 8px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:11px;font-family:inherit;transition:.15s;white-space:nowrap}
+.cat-chip:hover{border-color:var(--accent);color:var(--accent)}
+.cat-chip.active{background:var(--surface3);border-color:var(--accent);color:var(--accent)}
+/* Equipment list */
+.equip-list{flex:1;overflow-y:auto;padding:8px 0}
+.equip-list::-webkit-scrollbar{width:4px}
+.equip-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.equip-group{margin-bottom:4px}
+.equip-group-header{padding:4px 12px;font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.06em;background:var(--surface2)}
+.equip-item{padding:7px 14px;cursor:pointer;border-left:3px solid transparent;transition:.12s;display:flex;align-items:center;gap:6px}
+.equip-item:hover{background:var(--surface2);border-left-color:var(--accent)}
+.equip-item.selected{background:rgba(79,163,224,.12);border-left-color:var(--gold);color:var(--gold)}
+.equip-name{flex:1;line-height:1.3}
+.equip-arrow{color:var(--muted);font-size:10px;flex-shrink:0}
+/* CONTENT */
+.content{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+/* STATS BAR */
+.stats-bar{background:var(--surface2);border-bottom:2px solid var(--border);padding:10px 16px;flex-shrink:0}
+.stats-title{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;margin-bottom:8px}
+.stat-card{background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:6px 10px}
+.stat-card-label{font-size:10px;color:var(--muted);margin-bottom:2px}
+.stat-card-value{font-size:13px;font-weight:700;color:var(--white)}
+.stat-card.accent .stat-card-value{color:var(--accent)}
+.stat-card.gold .stat-card-value{color:var(--gold)}
+.soubi-totals{display:flex;flex-wrap:wrap;gap:5px}
+.soubi-tag{padding:3px 8px;background:var(--surface3);border:1px solid var(--border);border-radius:4px;font-size:12px}
+.soubi-tag .sq{color:var(--gold);font-weight:700}
+/* TREE SCROLL AREA */
+.tree-scroll{flex:1;overflow-y:auto;padding:16px}
+.tree-scroll::-webkit-scrollbar{width:6px}
+.tree-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);gap:10px;text-align:center}
+.empty-icon{font-size:48px;opacity:.3}
+/* LOAD SCREEN */
+.load-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px}
+.load-box{background:var(--surface2);border:2px dashed var(--border);border-radius:12px;padding:32px 48px;text-align:center;cursor:pointer;transition:.2s;max-width:400px;width:100%}
+.load-box:hover{border-color:var(--accent)}
+.load-box h2{font-size:15px;margin-bottom:8px;color:var(--white)}
+.load-box p{font-size:12px;color:var(--muted);margin-bottom:16px}
+.load-btn{padding:8px 20px;background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:13px;font-family:inherit;cursor:pointer;font-weight:700}
+.load-hint{font-size:11px;color:var(--muted);text-align:center}
+/* TREE NODES */
+.target-node{background:linear-gradient(135deg,#1a2a1a,#1a2510);border:2px solid var(--green);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.target-node .icon{font-size:20px}
+.target-node .name{font-size:16px;font-weight:700;color:var(--green)}
+.target-node .label{font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
+.tree-connector{margin-left:20px;padding-left:20px;border-left:2px solid var(--border);position:relative}
+.tree-connector::before{content:'';position:absolute;left:-1px;top:0;width:20px;height:20px;border-bottom:2px solid var(--border);border-bottom-left-radius:0}
+/* SOURCE BLOCK */
+.source-block{margin-bottom:12px}
+.source-header{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--accent);border-radius:8px;padding:10px 14px;margin-bottom:8px}
+.source-header .sh-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.source-header .sh-name{font-size:14px;font-weight:700;color:var(--accent)}
+.source-header .sh-meta{display:flex;gap:8px;flex-wrap:wrap}
+/* STEPS */
+.steps-container{margin-left:8px;padding-left:20px;border-left:2px solid var(--border)}
+.step-block{margin-bottom:8px;position:relative}
+.step-block::before{content:'';position:absolute;left:-21px;top:16px;width:16px;height:2px;background:var(--border)}
+.step-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:.15s}
+.step-card:hover{border-color:var(--surface3)}
+.step-header{padding:8px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--surface3)}
+.step-header .star-badge{background:var(--surface);border:1px solid var(--star);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--star);font-weight:700;white-space:nowrap}
+.step-header .times-badge{background:rgba(79,163,224,.15);border:1px solid rgba(79,163,224,.3);border-radius:4px;padding:2px 7px;font-size:10px;color:var(--accent);font-weight:700;white-space:nowrap}
+.step-header .toggle{margin-left:auto;color:var(--muted);font-size:12px;transition:.2s}
+.step-header.open .toggle{transform:rotate(90deg)}
+.step-body{padding:10px 12px;display:none;border-top:1px solid var(--border)}
+.step-body.open{display:block}
+/* Alternatives */
+.alt-separator{margin:8px 0;font-size:10px;color:var(--muted);text-align:center;position:relative}
+.alt-separator::before,.alt-separator::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--border)}
+.alt-separator::before{left:0}.alt-separator::after{right:0}
+.alt-block{padding:8px;background:var(--surface);border:1px solid var(--border);border-radius:6px;margin-bottom:6px}
+.alt-block:last-child{margin-bottom:0}
+.info-row{display:flex;align-items:baseline;gap:6px;margin-bottom:5px;flex-wrap:wrap}
+.info-label{font-size:10px;color:var(--muted);min-width:60px;font-weight:700}
+.info-val{font-size:12px;color:var(--text)}
+/* Ships */
+.ship-tag{display:inline-block;background:rgba(240,192,64,.12);border:1px solid rgba(240,192,64,.3);border-radius:3px;padding:1px 6px;font-size:11px;color:var(--gold);margin:2px}
+/* Days */
+.day-pill{display:inline-block;border-radius:3px;padding:2px 5px;font-size:10px;margin:1px;font-weight:700}
+.day-pill.on{background:rgba(79,163,224,.2);border:1px solid rgba(79,163,224,.4);color:var(--accent)}
+.day-pill.off{background:transparent;border:1px solid transparent;color:var(--muted)}
+.day-pill.on.weekend{background:rgba(192,64,64,.2);border-color:rgba(192,64,64,.4);color:#e07070}
+/* Soubi */
+.soubi-item{display:inline-flex;align-items:center;gap:3px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:2px 7px;font-size:11px;margin:2px}
+.soubi-item .eq-name{color:var(--text)}
+.soubi-item .eq-count{color:var(--gold);font-weight:700}
+.soubi-item .expand-btn{cursor:pointer;color:var(--accent);font-size:10px;margin-left:2px;border:none;background:none;padding:0;font-family:inherit}
+/* Resources */
+.res-grid{display:flex;gap:6px;flex-wrap:wrap}
+.res-box{text-align:center;background:var(--surface3);border:1px solid var(--border);border-radius:4px;padding:4px 8px;min-width:60px}
+.res-box .res-label{font-size:9px;color:var(--muted)}
+.res-box .res-val{font-size:13px;font-weight:700}
+.res-box.fuel .res-val{color:#60b0f0}
+.res-box.ammo .res-val{color:#e8d060}
+.res-box.steel .res-val{color:#80c080}
+.res-box.bauxite .res-val{color:#e09060}
+.res-box.dev .res-val{color:#c090e0}
+.res-box.impr .res-val{color:#e0a0c0}
+.cum-row{margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+.cum-label{font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:700}
+/* UPDATE CARD */
+.update-card{background:linear-gradient(135deg,#1a1a2a,#1a2030);border:2px solid var(--gold);border-radius:8px;padding:12px 16px;margin-bottom:8px}
+.update-card .uc-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.update-card .uc-star{font-size:12px;font-weight:700;color:var(--gold);background:rgba(240,192,64,.15);border:1px solid rgba(240,192,64,.4);border-radius:4px;padding:2px 8px}
+.update-card .uc-arrow{color:var(--gold);font-size:14px}
+.update-card .uc-result{font-size:13px;font-weight:700;color:var(--green)}
+/* NOMATCH */
+.nomatch{padding:6px 10px;background:rgba(80,40,40,.3);border:1px solid rgba(200,80,80,.3);border-radius:4px;font-size:11px;color:#c08080;text-align:center}
+/* Soubi subtree */
+.soubi-tree{margin:6px 0 0 16px;padding-left:12px;border-left:1px dashed var(--border)}
+.soubi-tree-inner{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px;margin-top:4px}
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;height:200px;color:var(--muted)}
 </style>
-
 </head>
-
 <body>
-
-<header>
-<select id="cat"></select>
-<select id="eq"></select>
-</header>
-
-<div id="summary"></div>
-<div id="main"></div>
+<div class="app" id="app">
+  <div class="header">
+    <div class="status-dot" id="statusDot"></div>
+    <h1>⚙️ 改修更新ツリー</h1>
+    <span class="sub" id="statusText">kaisyu.json を読み込んでいます…</span>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button class="day-btn" id="reloadBtn" style="display:none" onclick="showLoadUI()">📂 再読込</button>
+    </div>
+  </div>
+  <div class="body" id="mainBody">
+    <div class="load-screen" id="loadScreen">
+      <div class="load-box" id="loadBox" onclick="document.getElementById('fileInput').click()" 
+           ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+        <div style="font-size:40px;margin-bottom:8px">📦</div>
+        <h2>kaisyu.json を読み込む</h2>
+        <p>ここをクリックしてファイルを選択するか、<br>ドラッグ＆ドロップしてください</p>
+        <button class="load-btn" onclick="event.stopPropagation();document.getElementById('fileInput').click()">ファイルを選択</button>
+        <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFile(this.files[0])">
+      </div>
+      <p class="load-hint">同ディレクトリに kaisyu.json がある場合は自動読み込みされます</p>
+    </div>
+  </div>
+</div>
 
 <script>
+// ===== グローバル状態 =====
+const G = {
+  data: null,
+  lookup: {},      // equipName -> {category, equip}
+  targets: new Map(), // targetName -> [{sourceName, sourceCategory, equip, item}]
+  targetList: [],  // flat sorted list of target names
+  selected: null,
+  dayFilter: -1,   // -1=全, 0=日...6=土
+  searchText: '',
+  catFilter: '',
+  expandedSteps: new Set(),
+  expandedSoubi: new Set(),
+  cumulRes: {}     // keyStr -> cumulative resources up to this point
+};
 
-let DATA;
-let current;
+const DAYS = ['日','月','火','水','木','金','土'];
+const RES_NAMES = ['燃料','弾薬','鋼材','ボーキ'];
+const RES_KEYS  = ['fuel','ammo','steel','bauxite'];
 
-// JSON
-fetch("kaisyu.json").then(r=>r.json()).then(d=>{
-  DATA=d;
-  init();
+// ===== 初期化 =====
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const resp = await fetch('./kaisyu.json');
+    if (resp.ok) {
+      const json = await resp.json();
+      initData(json);
+      return;
+    }
+  } catch(e) {}
+  showLoadUI();
 });
 
-function init(){
+function showLoadUI() {
+  document.getElementById('loadScreen').style.display = '';
+  const mb = document.getElementById('mainBody');
+  if (!mb.contains(document.getElementById('loadScreen'))) {
+    mb.innerHTML = '';
+    mb.appendChild(document.getElementById('loadScreen'));
+  }
+  document.getElementById('reloadBtn').style.display = 'block';
+  setStatus('待機中', false);
+}
 
-  const c=document.getElementById("cat");
-  const e=document.getElementById("eq");
+function handleFile(file) {
+  if (!file) return;
+  setStatus('読み込み中…', false);
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const json = JSON.parse(e.target.result);
+      initData(json);
+    } catch(err) {
+      setStatus('JSONの解析に失敗しました', false);
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
 
-  Object.keys(DATA).forEach(k=>c.add(new Option(k,k)));
+function handleDrop(e) {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+}
 
-  c.onchange=()=>{
-    e.innerHTML="";
-    Object.keys(DATA[c.value]).forEach(n=>{
-      const eq=DATA[c.value][n];
-      if(eq.info["10"] && eq.info["10"].some(r=>r.result)){
-        e.add(new Option(n,n));
+function setStatus(txt, ok) {
+  document.getElementById('statusText').textContent = txt;
+  document.getElementById('statusDot').className = 'status-dot' + (ok ? ' ok' : '');
+}
+
+// ===== データ構造構築 =====
+function initData(json) {
+  G.data = json;
+  G.lookup = {};
+  G.targets = new Map();
+
+  for (const [cat, equips] of Object.entries(json)) {
+    for (const [name, equip] of Object.entries(equips)) {
+      G.lookup[name] = { category: cat, equip };
+    }
+  }
+
+  for (const [cat, equips] of Object.entries(json)) {
+    for (const [name, equip] of Object.entries(equips)) {
+      const items10 = equip.info['10'] || [];
+      for (const item of items10) {
+        if (item.result) {
+          if (!G.targets.has(item.result)) G.targets.set(item.result, []);
+          G.targets.get(item.result).push({ sourceName: name, sourceCategory: cat, equip, item });
+        }
       }
-    });
-  };
+    }
+  }
 
-  c.onchange();
-
-  e.onchange=()=>{
-    current=e.value;
-    render();
-  };
+  G.targetList = Array.from(G.targets.keys()).sort();
+  setStatus(`${G.targetList.length}件の改修更新装備を読み込みました`, true);
+  document.getElementById('reloadBtn').style.display = 'block';
+  buildMainUI();
 }
 
-// 描画
-function render(){
-
-  const eq=find(current);
-
-  const main=document.getElementById("main");
-  main.innerHTML="";
-
-  totalMat={};
-  totalRes=[0,0,0,0];
-  totalShip=new Set();
-
-  // 上に統計出すため先計算
-  calc(eq,"0",6);
-  calc(eq,"6",4);
-  calc(eq,"10",1);
-
-  renderSummary();
-
-  // ツリー
-  draw(eq,"10","★10（1回）",true);
-  arrow();
-  draw(eq,"6","★6 → ★9（4回）");
-  arrow();
-  draw(eq,"0","★0 → ★5（6回）");
+// ===== メインUI構築 =====
+function buildMainUI() {
+  const mb = document.getElementById('mainBody');
+  mb.innerHTML = `
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <label>曜日フィルター</label>
+        <div class="day-btns">
+          <button class="day-btn active" data-day="-1" onclick="setDay(-1)">全</button>
+          ${DAYS.map((d,i)=>`<button class="day-btn d${i}" data-day="${i}" onclick="setDay(${i})">${d}</button>`).join('')}
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <label>カテゴリ</label>
+        <div class="cat-chips" id="catChips">
+          <button class="cat-chip active" data-cat="" onclick="setCat('')">全て</button>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <label>装備名検索</label>
+        <input class="search-box" type="text" placeholder="装備名を入力…" oninput="setSearch(this.value)">
+      </div>
+      <div class="equip-list" id="equipList"></div>
+    </aside>
+    <main class="content" id="content">
+      <div class="empty-state">
+        <div class="empty-icon">⚙️</div>
+        <div>左のリストから目標装備を選択してください</div>
+        <div style="font-size:11px;color:var(--muted)">改修更新で入手できる装備が表示されます</div>
+      </div>
+    </main>
+  `;
+  buildCatChips();
+  renderEquipList();
 }
 
-// 計算
-function calc(eq,key,count){
+function buildCatChips() {
+  const cats = new Set();
+  for (const [tgt, sources] of G.targets) {
+    for (const src of sources) cats.add(src.sourceCategory);
+  }
+  const sorted = Array.from(cats).sort();
+  const container = document.getElementById('catChips');
+  sorted.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-chip';
+    btn.dataset.cat = cat;
+    btn.textContent = cat.replace(/[主砲副砲]/g,'').replace('艦上','').replace('水上','') || cat.slice(0,4);
+    btn.title = cat;
+    btn.onclick = () => setCat(cat);
+    container.appendChild(btn);
+  });
+}
 
-  const list=merge(eq.info[key]);
-  if(!list) return;
+function setDay(d) {
+  G.dayFilter = d;
+  document.querySelectorAll('.day-btn').forEach(b => {
+    b.classList.toggle('active', +b.dataset.day === d);
+  });
+  if (G.selected) renderTree(G.selected);
+  renderEquipList();
+}
 
-  list.forEach(r=>{
+function setCat(cat) {
+  G.catFilter = cat;
+  document.querySelectorAll('.cat-chip').forEach(b => {
+    b.classList.toggle('active', b.dataset.cat === cat);
+  });
+  renderEquipList();
+}
 
-    (r.soubi||[]).forEach(s=>{
-      totalMat[s[0]]=(totalMat[s[0]]||0)+s[1]*count;
-    });
+function setSearch(txt) {
+  G.searchText = txt.trim();
+  renderEquipList();
+}
 
-    if(eq.resource){
-      eq.resource.forEach((v,i)=>{
-        totalRes[i]+=v*count;
-      });
+// ===== 装備リスト描画 =====
+function renderEquipList() {
+  const container = document.getElementById('equipList');
+  if (!container) return;
+  const search = G.searchText;
+  const dayIdx = G.dayFilter;
+
+  // カテゴリ別にグループ化
+  const grouped = {};
+  for (const tgt of G.targetList) {
+    const sources = G.targets.get(tgt);
+    if (!sources) continue;
+
+    // カテゴリフィルター
+    const cats = sources.map(s => s.sourceCategory);
+    if (G.catFilter && !cats.includes(G.catFilter)) continue;
+
+    // 検索フィルター
+    if (search && !tgt.includes(search)) continue;
+
+    // 曜日フィルター: ★10の中に対象曜日があるかチェック
+    if (dayIdx >= 0) {
+      const hasDay = sources.some(s => s.item.youbi && s.item.youbi[dayIdx] === 1);
+      if (!hasDay) continue;
     }
 
-    r.ship.forEach(s=> totalShip.add(s));
-  });
-}
-
-// ノード描画
-function draw(eq,key,label,isUpdate=false){
-
-  const list=merge(eq.info[key]);
-  if(!list) return;
-
-  list.forEach(r=>{
-
-    const div=document.createElement("div");
-    div.className="node";
-
-    let mats = (r.soubi||[])
-      .map(s=>`${s[0]}×${s[1]}`)
-      .join(" ");
-
-    div.innerHTML=`
-      <div class="title">${label}</div>
-      艦: ${uniq(r.ship)}<br>
-      素材（1回）: ${mats}<br>
-      ${isUpdate && r.result ? `<div class="update">更新 → ${r.result}</div>`:""}
-    `;
-
-    document.getElementById("main").appendChild(div);
-  });
-}
-
-function arrow(){
-  const div=document.createElement("div");
-  div.className="arrow";
-  div.textContent="↓";
-  document.getElementById("main").appendChild(div);
-}
-
-// 統計表示（上）
-function renderSummary(){
-
-  let mat = Object.entries(totalMat)
-    .map(([k,v])=>`${k} × ${v}`)
-    .join("<br>");
-
-  let res = `
-    燃料 ${totalRes[0]} /
-    弾薬 ${totalRes[1]} /
-    鋼材 ${totalRes[2]} /
-    ボーキ ${totalRes[3]}
-  `;
-
-  let ship=[...totalShip].join(" / ");
-
-  document.getElementById("summary").innerHTML=`
-    <b>総コスト</b><br><br>
-    素材:<br>${mat}<br><br>
-    資源:<br>${res}<br><br>
-    必要艦:<br>${ship}
-  `;
-}
-
-// utils
-function merge(list){
-  if(!list)return;
-  const m={};
-  list.forEach(r=>{
-    const k=JSON.stringify(r.soubi);
-    if(!m[k]) m[k]={...r};
-    else m[k].ship.push(...r.ship);
-  });
-  return Object.values(m);
-}
-
-function uniq(arr){
-  return [...new Set(arr)].join(" / ");
-}
-
-function find(name){
-  for(const c in DATA){
-    if(DATA[c][name]) return DATA[c][name];
+    const cat = G.catFilter ? G.catFilter : (cats[0] || 'その他');
+    const displayCat = G.catFilter ? G.catFilter : cats[0];
+    if (!grouped[displayCat]) grouped[displayCat] = [];
+    grouped[displayCat].push(tgt);
   }
+
+  let html = '';
+  for (const [cat, items] of Object.entries(grouped).sort()) {
+    html += `<div class="equip-group">
+      <div class="equip-group-header">${cat}</div>
+      ${items.map(tgt => `
+        <div class="equip-item ${G.selected===tgt?'selected':''}" onclick="selectTarget('${esc(tgt)}')">
+          <span class="equip-name">${esc(tgt)}</span>
+          <span class="equip-arrow">›</span>
+        </div>`).join('')}
+    </div>`;
+  }
+  if (!html) html = `<div style="padding:16px;color:var(--muted);text-align:center;font-size:12px">該当する装備がありません</div>`;
+  container.innerHTML = html;
 }
 
-</script>
+function selectTarget(name) {
+  G.selected = name;
+  G.expandedSteps = new Set();
+  G.expandedSoubi = new Set();
+  renderEquipList();
+  renderTree(name);
+}
 
+// ===== ツリー描画 =====
+function renderTree(targetName) {
+  const content = document.getElementById('content');
+  if (!content) return;
+  content.innerHTML = '<div class="loading">読み込み中…</div>';
+
+  const sources = G.targets.get(targetName);
+  if (!sources || sources.length === 0) {
+    content.innerHTML = `<div class="empty-state"><div>データが見つかりません</div></div>`;
+    return;
+  }
+
+  // 統計を計算（全ソースの合計ではなく最初のルートを代表として）
+  const primarySource = sources[0];
+  const stats = calcTotalCost(primarySource.equip, targetName, primarySource.sourceName);
+  const allShips = collectAllShips(primarySource.equip, targetName);
+
+  let html = '';
+
+  // === STATS BAR ===
+  html += `<div class="stats-bar">
+    <div class="stats-title">📊 総コスト（★0→★10改修更新まで）</div>
+    <div class="stats-grid">
+      <div class="stat-card gold">
+        <div class="stat-card-label">元装備（代表）</div>
+        <div class="stat-card-value">${esc(primarySource.sourceName)}</div>
+      </div>
+      ${stats.res.map((v,i)=>v>0?`
+        <div class="stat-card">
+          <div class="stat-card-label">${RES_NAMES[i]}</div>
+          <div class="stat-card-value ${RES_KEYS[i]}" style="color:var(--${RES_KEYS[i]})">${v.toLocaleString()}</div>
+        </div>`:''
+      ).join('')}
+      <div class="stat-card accent">
+        <div class="stat-card-label">開発資材（計）</div>
+        <div class="stat-card-value">${stats.devMin}〜${stats.devMax}個</div>
+      </div>
+      <div class="stat-card" style="--accent:#e0a0c0">
+        <div class="stat-card-label">改修資材（計）</div>
+        <div class="stat-card-value" style="color:#e0a0c0">${stats.impMin}〜${stats.impMax}個</div>
+      </div>
+    </div>
+    <div style="margin-bottom:6px;font-size:10px;color:var(--muted);font-weight:700">🚢 必要艦艇</div>
+    <div style="margin-bottom:8px;display:flex;flex-wrap:wrap;gap:4px">
+      ${allShips.map(s=>`<span class="ship-tag">⚓ ${esc(s)}</span>`).join('') || '<span style="color:var(--muted);font-size:11px">制限なし</span>'}
+    </div>
+    <div style="margin-bottom:4px;font-size:10px;color:var(--muted);font-weight:700">📦 素材総計</div>
+    <div class="soubi-totals">
+      ${Object.entries(stats.soubiTotals).map(([name,count])=>`
+        <span class="soubi-tag"><span class="sq">×${count}</span> ${esc(name)}</span>`).join('') || '<span style="color:var(--muted);font-size:11px">なし</span>'}
+    </div>
+  </div>`;
+
+  // === TREE ===
+  html += `<div class="tree-scroll"><div id="treeInner">`;
+
+  // 目標ノード
+  html += `<div class="target-node">
+    <div>
+      <div class="label">🎯 目標装備</div>
+      <div class="name">${esc(targetName)}</div>
+    </div>
+  </div>`;
+
+  // 各ルート（複数の元装備/レシピがある場合）
+  for (let si = 0; si < sources.length; si++) {
+    const { sourceName, equip, item, sourceCategory } = sources[si];
+    html += renderSourceBlock(sourceName, sourceCategory, equip, targetName, item, si, sources.length);
+  }
+
+  html += `</div></div>`;
+  content.innerHTML = html;
+}
+
+function renderSourceBlock(sourceName, sourceCat, equip, targetName, updateItem, idx, total) {
+  const allKeys = Object.keys(equip.info);
+  const stepKeys = allKeys.filter(k => k !== '10').map(Number).sort((a,b) => a-b);
+
+  let html = `<div class="tree-connector">`;
+
+  // ソースヘッダー
+  html += `<div class="source-block">
+    <div class="source-header">
+      <div class="sh-top">
+        <span style="font-size:11px;color:var(--muted)">[${sourceCat}]</span>
+        <span class="sh-name">⚙️ ${esc(sourceName)}</span>
+        <span style="font-size:11px;color:var(--muted)">を★10まで改修→改修更新</span>
+        ${total > 1 ? `<span style="margin-left:auto;font-size:10px;color:var(--muted)">ルート${idx+1}/${total}</span>` : ''}
+      </div>
+      <div class="sh-meta">
+        <span style="font-size:11px;color:var(--muted)">基礎資源(1回あたり):</span>
+        ${equip.resource.map((v,i)=>v>0?`<span style="font-size:11px"><span style="color:var(--muted)">${RES_NAMES[i]}</span> <b style="color:var(--white)">${v}</b></span>`:'').join(' ')||'<span style="font-size:11px;color:var(--muted)">なし</span>'}
+      </div>
+    </div>
+  </div>`;
+
+  html += `<div class="steps-container">`;
+
+  // 各★ステップ
+  let cumRes = [0,0,0,0];
+  let cumDev = [0,0], cumImp = [0,0];
+
+  for (let ki = 0; ki < stepKeys.length; ki++) {
+    const keyNum = stepKeys[ki];
+    const keyStr = String(keyNum);
+    const nextKey = ki + 1 < stepKeys.length ? stepKeys[ki+1] : 10;
+    const stepCount = nextKey - keyNum;
+    const items = equip.info[keyStr] || [];
+    const filteredItems = filterItemsForTarget(items, targetName, G.dayFilter);
+
+    // ★ラベル
+    const starLabel = keyNum === 0
+      ? `★0 → ★${nextKey} （各${stepCount}回）`
+      : `★${keyNum} → ★${nextKey} （${stepCount}回）`;
+
+    const stepId = `step_${sourceName}_${keyStr}_${idx}`.replace(/[^a-zA-Z0-9_]/g,'_');
+    const isOpen = G.expandedSteps.has(stepId) || true; // デフォルト展開
+
+    // 累計資源計算
+    const repItem = filteredItems.length > 0 ? filteredItems[0] : (items[0] || null);
+    if (repItem) {
+      cumRes = cumRes.map((v,i) => v + (equip.resource[i]||0) * stepCount);
+      cumDev[0] += repItem.kaihatu[0] * stepCount;
+      cumDev[1] += repItem.kaihatu[1] * stepCount;
+      cumImp[0] += repItem.kaisyu[0] * stepCount;
+      cumImp[1] += repItem.kaisyu[1] * stepCount;
+    }
+
+    const hasDayMatch = filteredItems.length > 0;
+
+    html += `<div class="step-block">
+      <div class="step-card">
+        <div class="step-header ${isOpen?'open':''}" onclick="toggleStep('${stepId}')">
+          <span class="star-badge">⭐ ${starLabel}</span>
+          <span class="times-badge">×${stepCount}回</span>
+          ${!hasDayMatch && G.dayFilter>=0 ? `<span style="font-size:10px;color:var(--red)">⚠ 選択曜日では実施不可</span>` : ''}
+          <span class="toggle">▶</span>
+        </div>
+        <div class="step-body ${isOpen?'open':''}" id="${stepId}">`;
+
+    if (filteredItems.length === 0) {
+      if (G.dayFilter >= 0) {
+        html += `<div class="nomatch">この曜日（${DAYS[G.dayFilter]}）では実施できる艦がいません</div>`;
+        // 全エントリを薄く表示
+        html += renderAltList(items, equip, stepCount, cumRes, cumDev, cumImp, false);
+      } else {
+        html += renderAltList(items, equip, stepCount, cumRes, cumDev, cumImp, true);
+      }
+    } else {
+      html += renderAltList(filteredItems, equip, stepCount, cumRes, cumDev, cumImp, true);
+    }
+
+    html += `</div></div></div>`;
+  }
+
+  // ★10 改修更新
+  html += renderUpdateBlock(updateItem, targetName, sourceName, equip, cumRes, cumDev, cumImp, idx);
+  html += `</div></div>`;
+  return html;
+}
+
+function renderAltList(items, equip, stepCount, cumRes, cumDev, cumImp, active) {
+  let html = '';
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (i > 0) html += `<div class="alt-separator">または</div>`;
+
+    html += `<div class="alt-block" style="${active?'':'opacity:.45'}">`;
+    // 艦
+    html += `<div class="info-row">
+      <span class="info-label">🚢 必要艦艇</span>
+      <span class="info-val">
+        ${item.ship.length > 0
+          ? item.ship.map(s=>`<span class="ship-tag">⚓ ${esc(s)}</span>`).join('')
+          : '<span style="color:var(--muted)">制限なし</span>'}
+      </span>
+    </div>`;
+    // 曜日
+    html += `<div class="info-row">
+      <span class="info-label">📅 曜日</span>
+      <span class="info-val">${renderDays(item.youbi)}</span>
+    </div>`;
+    // 素材（soubi）
+    if (item.soubi && item.soubi.length > 0) {
+      html += `<div class="info-row">
+        <span class="info-label">🔧 素材</span>
+        <span class="info-val">${renderSoubiList(item.soubi)}</span>
+      </div>`;
+    } else {
+      html += `<div class="info-row">
+        <span class="info-label">🔧 素材</span>
+        <span class="info-val" style="color:var(--muted)">なし</span>
+      </div>`;
+    }
+    // 資材 (1回)
+    const res = equip.resource;
+    html += `<div class="info-row">
+      <span class="info-label">💰 資源(1回)</span>
+      <span class="info-val">
+        <div class="res-grid">
+          ${res.map((v,i)=>v>0?`<div class="res-box ${RES_KEYS[i]}"><div class="res-label">${RES_NAMES[i]}</div><div class="res-val">${v}</div></div>`:''
+          ).join('')}
+          <div class="res-box dev"><div class="res-label">開発資材</div><div class="res-val">${item.kaihatu[0]}〜${item.kaihatu[1]}</div></div>
+          <div class="res-box impr"><div class="res-label">改修資材</div><div class="res-val">${item.kaisyu[0]}〜${item.kaisyu[1]}</div></div>
+        </div>
+      </span>
+    </div>`;
+    // 累計表示
+    html += `<div class="cum-row">
+      <div class="cum-label">📈 ここまでの累計（★0からこのステップ完了後）</div>
+      <div class="res-grid">
+        ${cumRes.map((v,i)=>v>0?`<div class="res-box ${RES_KEYS[i]}"><div class="res-label">${RES_NAMES[i]}</div><div class="res-val">${v}</div></div>`:''
+        ).join('')}
+        <div class="res-box dev"><div class="res-label">開発資材</div><div class="res-val">${cumDev[0]}〜${cumDev[1]}</div></div>
+        <div class="res-box impr"><div class="res-label">改修資材</div><div class="res-val">${cumImp[0]}〜${cumImp[1]}</div></div>
+      </div>
+    </div>`;
+    html += `</div>`;
+  }
+  return html || `<div class="nomatch">データなし</div>`;
+}
+
+function renderUpdateBlock(updateItem, targetName, sourceName, equip, cumRes, cumDev, cumImp, idx) {
+  const dayMatch = G.dayFilter < 0 || (updateItem.youbi && updateItem.youbi[G.dayFilter] === 1);
+  const finalRes = cumRes.map((v,i) => v + (equip.resource[i]||0));
+  const finalDev = [cumDev[0]+updateItem.kaihatu[0], cumDev[1]+updateItem.kaihatu[1]];
+  const finalImp = [cumImp[0]+updateItem.kaisyu[0], cumImp[1]+updateItem.kaisyu[1]];
+
+  let html = `<div class="step-block">
+    <div class="update-card" style="${dayMatch||G.dayFilter<0?'':'opacity:.6'}">
+      <div class="uc-header">
+        <span class="uc-star">★10 改修更新</span>
+        <span class="uc-arrow">→</span>
+        <span class="uc-result">🎉 ${esc(targetName)}</span>
+        ${!dayMatch && G.dayFilter>=0 ? `<span style="margin-left:8px;font-size:10px;color:var(--red)">⚠ ${DAYS[G.dayFilter]}は実施不可</span>` : ''}
+      </div>
+      <div class="info-row">
+        <span class="info-label">🚢 必要艦艇</span>
+        <span>${updateItem.ship.length>0
+          ? updateItem.ship.map(s=>`<span class="ship-tag">⚓ ${esc(s)}</span>`).join('')
+          : '<span style="color:var(--muted)">制限なし</span>'}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">📅 曜日</span>
+        <span>${renderDays(updateItem.youbi)}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">🔧 更新素材</span>
+        <span>${updateItem.soubi && updateItem.soubi.length>0
+          ? renderSoubiList(updateItem.soubi)
+          : '<span style="color:var(--muted)">なし</span>'}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">💰 資材(更新)</span>
+        <span><div class="res-grid">
+          ${equip.resource.map((v,i)=>v>0?`<div class="res-box ${RES_KEYS[i]}"><div class="res-label">${RES_NAMES[i]}</div><div class="res-val">${v}</div></div>`:''
+          ).join('')}
+          <div class="res-box dev"><div class="res-label">開発資材</div><div class="res-val">${updateItem.kaihatu[0]}〜${updateItem.kaihatu[1]}</div></div>
+          <div class="res-box impr"><div class="res-label">改修資材</div><div class="res-val">${updateItem.kaisyu[0]}〜${updateItem.kaisyu[1]}</div></div>
+        </div></span>
+      </div>
+      <div class="cum-row">
+        <div class="cum-label">🏆 総計（★0→改修更新完了まで全て込み）</div>
+        <div class="res-grid">
+          ${finalRes.map((v,i)=>v>0?`<div class="res-box ${RES_KEYS[i]}" style="border-color:var(--gold)"><div class="res-label">${RES_NAMES[i]}</div><div class="res-val">${v}</div></div>`:''
+          ).join('')}
+          <div class="res-box dev" style="border-color:var(--gold)"><div class="res-label">開発資材</div><div class="res-val">${finalDev[0]}〜${finalDev[1]}</div></div>
+          <div class="res-box impr" style="border-color:var(--gold)"><div class="res-label">改修資材</div><div class="res-val">${finalImp[0]}〜${finalImp[1]}</div></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  return html;
+}
+
+// ===== ユーティリティ =====
+function filterItemsForTarget(items, targetName, dayIdx) {
+  // resultがtargetNameのものを優先
+  let filtered = items.filter(it => it.result === targetName || it.result === null);
+  if (filtered.length === 0) filtered = items;
+  // 曜日フィルター
+  if (dayIdx >= 0) {
+    filtered = filtered.filter(it => it.youbi && it.youbi[dayIdx] === 1);
+  }
+  return filtered;
+}
+
+function renderDays(youbi) {
+  if (!youbi || youbi.length < 7) return '<span style="color:var(--muted)">不明</span>';
+  return DAYS.map((d,i) => {
+    const on = youbi[i] === 1;
+    const wknd = i===0||i===6;
+    return `<span class="day-pill ${on?'on':'off'} ${on&&wknd?'weekend':''}">${d}</span>`;
+  }).join('');
+}
+
+function renderSoubiList(soubi) {
+  return soubi.map(([name, count]) => {
+    const canExpand = !!G.lookup[name];
+    const id = `soubitree_${name}`.replace(/[^a-zA-Z0-9_]/g,'_');
+    return `<span class="soubi-item">
+      <span class="eq-name">${esc(name)}</span>
+      <span class="eq-count"> ×${count}</span>
+      ${canExpand ? `<button class="expand-btn" onclick="event.stopPropagation();toggleSoubiInfo('${esc(id)}','${esc(name)}')" title="この装備の情報を表示">🔍</button>` : ''}
+    </span>`;
+  }).join('');
+}
+
+function toggleSoubiInfo(id, name) {
+  const existing = document.getElementById('soubi_panel_' + id);
+  if (existing) { existing.remove(); return; }
+  // Find the button and insert after its parent .soubi-item
+  const btn = event.target;
+  const panel = document.createElement('div');
+  panel.id = 'soubi_panel_' + id;
+  panel.className = 'soubi-tree';
+  panel.innerHTML = buildSoubiInfoHTML(name);
+  btn.closest('.info-row').insertAdjacentElement('afterend', panel);
+}
+
+function buildSoubiInfoHTML(name) {
+  const entry = G.lookup[name];
+  if (!entry) return `<div style="color:var(--muted);font-size:11px">データなし</div>`;
+  const { category, equip } = entry;
+
+  // この装備が改修更新で作れるものがあるか確認
+  const asTarget = G.targets.has(name);
+  const canBeResult = [];
+  for (const [tgt, srcs] of G.targets) {
+    for (const src of srcs) {
+      if (src.sourceName === name) canBeResult.push(tgt);
+    }
+  }
+
+  let html = `<div class="soubi-tree-inner">
+    <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:6px">📦 ${esc(name)} [${esc(category)}]</div>`;
+
+  if (asTarget) {
+    html += `<div style="font-size:11px;color:var(--green);margin-bottom:4px">✅ この装備は改修更新で入手可能です → <a href="#" onclick="event.preventDefault();selectTarget('${esc(name)}')" style="color:var(--accent)">${esc(name)}の入手ツリーを表示</a></div>`;
+  }
+  if (canBeResult.length > 0) {
+    html += `<div style="font-size:11px;color:var(--gold);margin-bottom:4px">🔄 この装備から改修更新: ${canBeResult.map(t=>`<a href="#" onclick="event.preventDefault();selectTarget('${esc(t)}')" style="color:var(--gold)">${esc(t)}</a>`).join(', ')}</div>`;
+  }
+
+  // 基礎情報
+  const res = equip.resource || [0,0,0,0];
+  const nonZeroRes = res.filter(v=>v>0);
+  if (nonZeroRes.length > 0) {
+    html += `<div style="font-size:11px;color:var(--muted)">基礎資源: ${res.map((v,i)=>v>0?`${RES_NAMES[i]}×${v}`:'').filter(Boolean).join(', ')}</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function toggleStep(id) {
+  const el = document.getElementById(id);
+  const hdr = el ? el.previousElementSibling : null;
+  if (!el) return;
+  const isOpen = el.classList.contains('open');
+  el.classList.toggle('open', !isOpen);
+  if (hdr) hdr.classList.toggle('open', !isOpen);
+}
+
+// ===== 統計計算 =====
+function calcTotalCost(equip, targetName, sourceName) {
+  const allKeys = Object.keys(equip.info);
+  const stepKeys = allKeys.filter(k => k !== '10').map(Number).sort((a,b)=>a-b);
+  const res = equip.resource || [0,0,0,0];
+
+  let totalRes = [0,0,0,0];
+  const soubiTotals = {};
+  let devMin = 0, devMax = 0, impMin = 0, impMax = 0;
+
+  for (let ki = 0; ki < stepKeys.length; ki++) {
+    const keyNum = stepKeys[ki];
+    const keyStr = String(keyNum);
+    const nextKey = ki+1 < stepKeys.length ? stepKeys[ki+1] : 10;
+    const stepCount = nextKey - keyNum;
+    const items = equip.info[keyStr] || [];
+    const relevant = filterItemsForTarget(items, targetName, -1); // 曜日フィルターなしで計算
+    const item = relevant.length > 0 ? relevant[0] : (items[0] || null);
+
+    totalRes = totalRes.map((v,i) => v + res[i] * stepCount);
+    if (item) {
+      devMin += item.kaihatu[0] * stepCount;
+      devMax += item.kaihatu[1] * stepCount;
+      impMin += item.kaisyu[0] * stepCount;
+      impMax += item.kaisyu[1] * stepCount;
+      for (const [sname, cnt] of (item.soubi || [])) {
+        soubiTotals[sname] = (soubiTotals[sname]||0) + cnt * stepCount;
+      }
+    }
+  }
+
+  // ★10更新
+  const items10 = (equip.info['10']||[]).filter(it=>it.result===targetName);
+  if (items10.length > 0) {
+    const it = items10[0];
+    totalRes = totalRes.map((v,i) => v + res[i]);
+    devMin += it.kaihatu[0]; devMax += it.kaihatu[1];
+    impMin += it.kaisyu[0];  impMax += it.kaisyu[1];
+    for (const [sname, cnt] of (it.soubi || [])) {
+      soubiTotals[sname] = (soubiTotals[sname]||0) + cnt;
+    }
+  }
+
+  return { res: totalRes, soubiTotals, devMin, devMax, impMin, impMax };
+}
+
+function collectAllShips(equip, targetName) {
+  const ships = new Set();
+  for (const [keyStr, items] of Object.entries(equip.info)) {
+    for (const item of items) {
+      if (item.result === targetName || item.result === null || keyStr === '10') {
+        if (keyStr === '10' && item.result !== targetName) continue;
+        for (const s of (item.ship || [])) ships.add(s);
+      }
+    }
+  }
+  return Array.from(ships);
+}
+
+// ===== 文字列エスケープ =====
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+</script>
 </body>
 </html>
