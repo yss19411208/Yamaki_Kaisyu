@@ -2,97 +2,91 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>改修ツリー完全版</title>
+<title>改修プランナー</title>
 
 <style>
-body { font-family: sans-serif; margin:0; }
+body {
+  margin:0;
+  font-family:sans-serif;
+  background:#1e1e1e;
+  color:white;
+}
 
 header {
-  background:#222;
-  color:white;
   padding:10px;
-}
-
-#container {
+  background:#111;
   display:flex;
-  height:85vh;
+  gap:10px;
+  align-items:center;
 }
 
-#left {
-  width:280px;
-  border-right:1px solid #ccc;
-  overflow:auto;
-  padding:10px;
-}
+select { padding:5px; }
 
-#center {
-  flex:1;
-  padding:20px;
-  overflow:auto;
-}
-
-.node {
-  text-align:center;
-  border-radius:8px;
-  padding:10px;
-  margin:20px auto;
-  width:320px;
-  color:white;
-  position:relative;
-}
-
-.star0 { background:#2196f3; }
-.star6 { background:#9c27b0; }
-.star10{ background:#f44336; }
-
-.line {
-  width:2px;
-  height:30px;
-  background:#999;
-  margin:auto;
-}
-
-.days span {
-  margin:1px;
-  padding:3px;
-  font-size:10px;
+#days span {
+  margin:2px;
+  padding:4px;
+  cursor:pointer;
 }
 
 .on { background:#4caf50; }
-.off{ background:#ccc; }
+.off{ background:#555; }
 
-#materials {
-  border-top:2px solid #333;
-  padding:10px;
+#main {
+  padding:20px;
 }
 
-.item { cursor:pointer; padding:5px; }
-.item:hover { background:#eee; }
+.stage {
+  margin:20px auto;
+  width:400px;
+  border-radius:10px;
+  padding:15px;
+  background:#2c2c2c;
+  box-shadow:0 3px 10px rgba(0,0,0,0.5);
+}
 
+.stage h3 { margin:0 0 10px 0; }
+
+.arrow {
+  text-align:center;
+  font-size:24px;
+}
+
+.materials, .resources {
+  margin-top:10px;
+  font-size:14px;
+}
+
+.result {
+  margin-top:10px;
+  color:#ff9800;
+  font-weight:bold;
+}
+
+.summary {
+  margin-top:20px;
+  padding:15px;
+  background:#111;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-装備選択
-<select id="category"></select>
-<select id="equip"></select>
+<select id="cat"></select>
+<select id="eq"></select>
 
-曜日
-<span id="filter"></span>
+<div id="days"></div>
 </header>
 
-<div id="container">
-<div id="center"></div>
-</div>
+<div id="main"></div>
 
-<div id="materials"><h3>素材合計</h3><div id="total"></div></div>
+<div class="summary" id="summary"></div>
 
 <script>
 
 const DAYS=["日","月","火","水","木","金","土"];
-let DAY_FILTER=[1,1,1,1,1,1,1];
+let FILTER=[1,1,1,1,1,1,1];
 let DATA;
 
 // 曜日UI
@@ -101,142 +95,132 @@ DAYS.forEach((d,i)=>{
   s.textContent=d;
   s.className="on";
   s.onclick=()=>{
-    DAY_FILTER[i]=1-DAY_FILTER[i];
-    s.className=DAY_FILTER[i]?"on":"off";
+    FILTER[i]=1-FILTER[i];
+    s.className=FILTER[i]?"on":"off";
+    renderCurrent();
   };
-  document.getElementById("filter").appendChild(s);
+  document.getElementById("days").appendChild(s);
 });
 
 // JSON
-fetch("kaisyu.json")
-.then(r=>r.json())
-.then(d=>{
+fetch("kaisyu.json").then(r=>r.json()).then(d=>{
   DATA=d;
   init();
 });
 
+let current=null;
+
 function init(){
 
-  const catSel=document.getElementById("category");
-  const eqSel=document.getElementById("equip");
+  const cSel=document.getElementById("cat");
+  const eSel=document.getElementById("eq");
 
-  // カテゴリ
-  Object.keys(DATA).forEach(c=>{
-    const opt=new Option(c,c);
-    catSel.add(opt);
-  });
+  Object.keys(DATA).forEach(c=>cSel.add(new Option(c,c)));
 
-  catSel.onchange=()=>{
-    eqSel.innerHTML="";
-    Object.keys(DATA[catSel.value]).forEach(n=>{
-      const eq=DATA[catSel.value][n];
+  cSel.onchange=()=>{
+    eSel.innerHTML="";
+    Object.keys(DATA[cSel.value]).forEach(n=>{
+      const eq=DATA[cSel.value][n];
       if(eq.info["10"] && eq.info["10"].some(r=>r.result)){
-        eqSel.add(new Option(n,n));
+        eSel.add(new Option(n,n));
       }
     });
   };
 
-  catSel.onchange();
+  cSel.onchange();
 
-  eqSel.onchange=()=>render(eqSel.value);
+  eSel.onchange=()=>{
+    current=eSel.value;
+    renderCurrent();
+  };
 }
 
-// 描画
-function render(name){
+function renderCurrent(){
+  if(!current)return;
 
-  const eq=find(name);
-  const container=document.getElementById("center");
-  container.innerHTML="";
-  total={};
+  const eq=find(current);
+  const main=document.getElementById("main");
+  main.innerHTML="";
 
-  drawStage(container, name, eq.info["10"], "star10", true);
-  line(container);
-  drawStage(container, name, eq.info["6"], "star6");
-  line(container);
-  drawStage(container, name, eq.info["0"], "star0");
+  totalMat={};
+  totalRes=[0,0,0,0];
 
-  renderTotal();
+  drawStage(main, eq, "0", "★0～5");
+  arrow(main);
+  drawStage(main, eq, "6", "★6～9");
+  arrow(main);
+  drawStage(main, eq, "10", "★10", true);
+
+  renderSummary();
 }
 
-// レシピを統合
-function mergeRecipes(list){
+function drawStage(root, eq, key, title, isUpdate=false){
 
-  const map={};
+  const list=eq.info[key];
+  if(!list)return;
 
   list.forEach(r=>{
-    const key=JSON.stringify({
-      soubi:r.soubi,
-      kaihatu:r.kaihatu,
-      kaisyu:r.kaisyu
-    });
-
-    if(!map[key]){
-      map[key]={...r, ship:[...r.ship]};
-    }else{
-      map[key].ship.push(...r.ship);
-    }
-  });
-
-  return Object.values(map);
-}
-
-// ステージ描画
-function drawStage(container, name, list, cls, isUpdate=false){
-
-  if(!list) return;
-
-  const merged=mergeRecipes(list);
-
-  merged.forEach(r=>{
 
     if(!matchDay(r.youbi)) return;
 
     const div=document.createElement("div");
-    div.className="node "+cls;
+    div.className="stage";
 
     let mats="";
     (r.soubi||[]).forEach(s=>{
       mats+=`${s[0]}×${s[1]} `;
-      total[s[0]]=(total[s[0]]||0)+s[1];
+      totalMat[s[0]]=(totalMat[s[0]]||0)+s[1];
     });
 
+    if(eq.resource){
+      totalRes = totalRes.map((v,i)=>v+eq.resource[i]);
+    }
+
     div.innerHTML=`
-      <b>${name}</b><br>
-      艦: ${unique(r.ship).join(" / ")}<br>
-      素材: ${mats}<br>
-      ${isUpdate ? "→ "+r.result : ""}
-      <div class="days">${days(r.youbi)}</div>
+      <h3>${title}</h3>
+      艦: ${joinUnique(r.ship)}<br>
+      <div class="materials">素材: ${mats}</div>
+      <div class="resources">資源: ${eq.resource.join(" / ")}</div>
+      ${isUpdate && r.result ? `<div class="result">[更新] → ${r.result}</div>` : ""}
     `;
 
-    container.appendChild(div);
+    root.appendChild(div);
   });
 }
 
-function line(container){
-  const l=document.createElement("div");
-  l.className="line";
-  container.appendChild(l);
+function arrow(root){
+  const a=document.createElement("div");
+  a.className="arrow";
+  a.textContent="↑";
+  root.appendChild(a);
 }
 
-function days(arr){
-  return arr.map((v,i)=>`<span class="${v?'on':'off'}">${DAYS[i]}</span>`).join("");
+function renderSummary(){
+
+  let matHTML = Object.entries(totalMat)
+    .map(([k,v])=>`${k} × ${v}`)
+    .join("<br>");
+
+  let resHTML = `
+    燃料 ${totalRes[0]}<br>
+    弾薬 ${totalRes[1]}<br>
+    鋼材 ${totalRes[2]}<br>
+    ボーキ ${totalRes[3]}<br>
+  `;
+
+  document.getElementById("summary").innerHTML=`
+    <h3>合計</h3>
+    <b>素材</b><br>${matHTML}<br><br>
+    <b>資源</b><br>${resHTML}
+  `;
 }
 
 function matchDay(arr){
-  return arr.some((v,i)=>v && DAY_FILTER[i]);
+  return arr.some((v,i)=>v&&FILTER[i]);
 }
 
-let total={};
-
-function renderTotal(){
-  document.getElementById("total").innerHTML=
-  Object.entries(total)
-  .map(([k,v])=>`${k} × ${v}`)
-  .join("<br>");
-}
-
-function unique(arr){
-  return Array.from(new Set(arr));
+function joinUnique(arr){
+  return [...new Set(arr)].join(" / ");
 }
 
 function find(name){
