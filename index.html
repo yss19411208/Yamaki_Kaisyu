@@ -2,72 +2,74 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>改修プランナー</title>
+<title>改修ルート最適UI</title>
 
 <style>
-body {
+body{
   margin:0;
   font-family:sans-serif;
-  background:#1e1e1e;
+  background:#0f172a;
   color:white;
 }
 
-header {
+/* ヘッダー */
+header{
   padding:10px;
-  background:#111;
+  background:#020617;
   display:flex;
   gap:10px;
+}
+
+/* メイン */
+#main{
+  display:flex;
+  flex-direction:column;
   align-items:center;
-}
-
-select { padding:5px; }
-
-#days span {
-  margin:2px;
-  padding:4px;
-  cursor:pointer;
-}
-
-.on { background:#4caf50; }
-.off{ background:#555; }
-
-#main {
   padding:20px;
 }
 
-.stage {
-  margin:20px auto;
-  width:400px;
-  border-radius:10px;
-  padding:15px;
-  background:#2c2c2c;
-  box-shadow:0 3px 10px rgba(0,0,0,0.5);
+/* ツリー */
+.tree{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
-.stage h3 { margin:0 0 10px 0; }
+/* 各ノード */
+.node{
+  width:420px;
+  background:#1e293b;
+  border-radius:12px;
+  padding:15px;
+  margin:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.5);
+}
 
-.arrow {
-  text-align:center;
+.node h3{
+  margin:0 0 10px 0;
+}
+
+/* 矢印 */
+.arrow{
   font-size:24px;
 }
 
-.materials, .resources {
-  margin-top:10px;
-  font-size:14px;
-}
-
-.result {
-  margin-top:10px;
-  color:#ff9800;
+/* 更新 */
+.update{
+  color:#facc15;
   font-weight:bold;
 }
 
-.summary {
+/* 合計 */
+.summary{
+  width:420px;
+  background:#020617;
   margin-top:20px;
   padding:15px;
-  background:#111;
+  border-radius:10px;
 }
 </style>
+
 </head>
 
 <body>
@@ -75,32 +77,15 @@ select { padding:5px; }
 <header>
 <select id="cat"></select>
 <select id="eq"></select>
-
-<div id="days"></div>
 </header>
 
 <div id="main"></div>
-
-<div class="summary" id="summary"></div>
+<div id="summary"></div>
 
 <script>
 
-const DAYS=["日","月","火","水","木","金","土"];
-let FILTER=[1,1,1,1,1,1,1];
 let DATA;
-
-// 曜日UI
-DAYS.forEach((d,i)=>{
-  const s=document.createElement("span");
-  s.textContent=d;
-  s.className="on";
-  s.onclick=()=>{
-    FILTER[i]=1-FILTER[i];
-    s.className=FILTER[i]?"on":"off";
-    renderCurrent();
-  };
-  document.getElementById("days").appendChild(s);
-});
+let current;
 
 // JSON
 fetch("kaisyu.json").then(r=>r.json()).then(d=>{
@@ -108,35 +93,33 @@ fetch("kaisyu.json").then(r=>r.json()).then(d=>{
   init();
 });
 
-let current=null;
-
 function init(){
 
-  const cSel=document.getElementById("cat");
-  const eSel=document.getElementById("eq");
+  const c=document.getElementById("cat");
+  const e=document.getElementById("eq");
 
-  Object.keys(DATA).forEach(c=>cSel.add(new Option(c,c)));
+  Object.keys(DATA).forEach(k=>c.add(new Option(k,k)));
 
-  cSel.onchange=()=>{
-    eSel.innerHTML="";
-    Object.keys(DATA[cSel.value]).forEach(n=>{
-      const eq=DATA[cSel.value][n];
+  c.onchange=()=>{
+    e.innerHTML="";
+    Object.keys(DATA[c.value]).forEach(n=>{
+      let eq=DATA[c.value][n];
       if(eq.info["10"] && eq.info["10"].some(r=>r.result)){
-        eSel.add(new Option(n,n));
+        e.add(new Option(n,n));
       }
     });
   };
 
-  cSel.onchange();
+  c.onchange();
 
-  eSel.onchange=()=>{
-    current=eSel.value;
-    renderCurrent();
+  e.onchange=()=>{
+    current=e.value;
+    render();
   };
 }
 
-function renderCurrent(){
-  if(!current)return;
+/* 描画 */
+function render(){
 
   const eq=find(current);
   const main=document.getElementById("main");
@@ -145,49 +128,63 @@ function renderCurrent(){
   totalMat={};
   totalRes=[0,0,0,0];
 
-  drawStage(main, eq, "0", "★0～5");
-  arrow(main);
-  drawStage(main, eq, "6", "★6～9");
-  arrow(main);
-  drawStage(main, eq, "10", "★10", true);
+  const tree=document.createElement("div");
+  tree.className="tree";
+
+  // 上から
+  draw(tree, eq, "10", "★10 → 更新", true);
+  arrow(tree);
+  draw(tree, eq, "6", "★6 → ★9");
+  arrow(tree);
+  draw(tree, eq, "0", "★0 → ★5");
+
+  main.appendChild(tree);
 
   renderSummary();
 }
 
-function drawStage(root, eq, key, title, isUpdate=false){
+/* ステージ描画 */
+function draw(root, eq, key, title, isUpdate=false){
 
-  const list=eq.info[key];
-  if(!list)return;
+  const list=merge(eq.info[key]);
+  if(!list) return;
 
   list.forEach(r=>{
 
-    if(!matchDay(r.youbi)) return;
+    const node=document.createElement("div");
+    node.className="node";
 
-    const div=document.createElement("div");
-    div.className="stage";
+    // 回数
+    let count = 0;
+    if(key==="0") count=6;
+    if(key==="6") count=4;
+    if(key==="10") count=1;
 
+    // 素材
     let mats="";
     (r.soubi||[]).forEach(s=>{
-      mats+=`${s[0]}×${s[1]} `;
-      totalMat[s[0]]=(totalMat[s[0]]||0)+s[1];
+      mats+=`${s[0]}×${s[1]*count} `;
+      totalMat[s[0]]=(totalMat[s[0]]||0)+s[1]*count;
     });
 
-    if(eq.resource){
-      totalRes = totalRes.map((v,i)=>v+eq.resource[i]);
-    }
+    // 資源（回数分）
+    let res = eq.resource.map(v=>v*count);
+    res.forEach((v,i)=> totalRes[i]+=v);
 
-    div.innerHTML=`
+    node.innerHTML=`
       <h3>${title}</h3>
-      艦: ${joinUnique(r.ship)}<br>
-      <div class="materials">素材: ${mats}</div>
-      <div class="resources">資源: ${eq.resource.join(" / ")}</div>
-      ${isUpdate && r.result ? `<div class="result">[更新] → ${r.result}</div>` : ""}
+      回数：${count}<br>
+      艦：${uniq(r.ship)}<br>
+      素材：${mats}<br>
+      資源：${res.join(" / ")}<br>
+      ${isUpdate && r.result ? `<div class="update">更新 → ${r.result}</div>`:""}
     `;
 
-    root.appendChild(div);
+    root.appendChild(node);
   });
 }
 
+/* 矢印 */
 function arrow(root){
   const a=document.createElement("div");
   a.className="arrow";
@@ -195,31 +192,41 @@ function arrow(root){
   root.appendChild(a);
 }
 
+/* 合計 */
 function renderSummary(){
 
-  let matHTML = Object.entries(totalMat)
-    .map(([k,v])=>`${k} × ${v}`)
-    .join("<br>");
+  let m=Object.entries(totalMat)
+    .map(([k,v])=>`${k} × ${v}`).join("<br>");
 
-  let resHTML = `
+  let r=`
     燃料 ${totalRes[0]}<br>
     弾薬 ${totalRes[1]}<br>
     鋼材 ${totalRes[2]}<br>
-    ボーキ ${totalRes[3]}<br>
+    ボーキ ${totalRes[3]}
   `;
 
   document.getElementById("summary").innerHTML=`
-    <h3>合計</h3>
-    <b>素材</b><br>${matHTML}<br><br>
-    <b>資源</b><br>${resHTML}
+    <div class="summary">
+      <h3>合計</h3>
+      <b>素材</b><br>${m}<br><br>
+      <b>資源</b><br>${r}
+    </div>
   `;
 }
 
-function matchDay(arr){
-  return arr.some((v,i)=>v&&FILTER[i]);
+/* ユーティリティ */
+function merge(list){
+  if(!list) return;
+  const m={};
+  list.forEach(r=>{
+    const k=JSON.stringify(r.soubi);
+    if(!m[k]) m[k]={...r};
+    else m[k].ship.push(...r.ship);
+  });
+  return Object.values(m);
 }
 
-function joinUnique(arr){
+function uniq(arr){
   return [...new Set(arr)].join(" / ");
 }
 
@@ -230,5 +237,6 @@ function find(name){
 }
 
 </script>
+
 </body>
 </html>
