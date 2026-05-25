@@ -6,79 +6,79 @@
 <title>改修更新ツリー</title>
 <style>
 :root{
-  --bg:#07101e;--sf:#0c1828;--sf2:#101f34;--sf3:#152640;--sf4:#1c2f4c;
-  --bd:#1a3252;--bd2:#24486e;--bd3:#305a88;
+  --bg:#07101e;--sf:#0c1828;--sf2:#101f34;--sf3:#152640;
+  --bd:#1a3252;--bd2:#24486e;
   --tx:#92b8d8;--mt:#385870;--wh:#bce0ff;--dim:#2a4860;
   --ac:#2070b8;--ac2:#38a0e8;
   --gd:#a87820;--gd2:#d0a830;--gd3:#f0c840;
   --gn:#186838;--gn2:#22a058;--gn3:#40e080;
-  --pp:#3a2880;--pp2:#6848cc;
-  --st:#b08820;--st2:#e0b030;
-  --rd:#782020;--rd2:#c03030;
+  --st2:#e0b030;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--tx);font-family:'Noto Sans JP','Yu Gothic UI',sans-serif;font-size:13px;line-height:1.5}
 button,input{font-family:inherit;cursor:pointer}
 .app{display:flex;flex-direction:column;height:100vh}
+
 /* HEADER */
-.hdr{
-  height:42px;flex-shrink:0;
-  background:linear-gradient(90deg,#040c18 0%,#0c1e34 100%);
-  border-bottom:1px solid var(--bd);
-  display:flex;align-items:center;gap:10px;padding:0 14px;
-}
-.hdr-badge{
-  width:26px;height:26px;border-radius:4px;
-  border:1px solid var(--ac);color:var(--ac);
-  display:flex;align-items:center;justify-content:center;
-  font-weight:900;font-size:11px;letter-spacing:-.04em;flex-shrink:0;
-}
+.hdr{height:42px;flex-shrink:0;background:linear-gradient(90deg,#040c18,#0c1e34);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;padding:0 14px}
+.hdr-badge{width:26px;height:26px;border-radius:4px;border:1px solid var(--ac);color:var(--ac);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;letter-spacing:-.04em;flex-shrink:0}
 .hdr-title{font-size:14px;font-weight:700;color:var(--wh);letter-spacing:.04em}
 .hdr-gap{flex:1}
 .st-dot{width:7px;height:7px;border-radius:50%;background:var(--mt);flex-shrink:0;transition:.3s}
 .st-dot.ok{background:var(--gn2)}
 .st-msg{font-size:11px;color:var(--mt)}
-.hdr-btn{padding:3px 9px;border-radius:3px;border:1px solid var(--bd);background:transparent;color:var(--mt);font-size:11px;transition:.1s}
+.hdr-btn{padding:3px 9px;border-radius:3px;border:1px solid var(--bd);background:transparent;color:var(--mt);font-size:11px}
 .hdr-btn:hover{border-color:var(--ac);color:var(--ac)}
+
 /* BODY */
 .body{display:flex;flex:1;overflow:hidden}
-/* SIDEBAR */
-.sb{
-  width:248px;flex-shrink:0;
-  background:var(--sf);border-right:1px solid var(--bd);
-  display:flex;flex-direction:column;overflow:hidden;
-}
-.sb-sec{padding:8px 10px;border-bottom:1px solid var(--bd)}
-.sb-lbl{display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--mt);margin-bottom:6px}
+
+/* ===== SIDEBAR ===== */
+.sb{width:256px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
+.sb-sec{padding:7px 10px;border-bottom:1px solid var(--bd)}
+.sb-lbl{display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--mt);margin-bottom:5px}
+
+/* 検索 */
+.srch{width:100%;padding:5px 9px;background:var(--sf2);border:1px solid var(--bd);border-radius:4px;color:var(--tx);font-size:13px;outline:none;transition:.1s}
+.srch:focus{border-color:var(--ac)}
+
+/* 曜日ボタン */
 .day-row{display:flex;gap:3px;flex-wrap:wrap}
 .dbtn{padding:2px 6px;border-radius:3px;border:1px solid var(--bd);background:transparent;color:var(--mt);font-size:12px;transition:.1s}
 .dbtn:hover{border-color:var(--ac);color:var(--ac)}
 .dbtn.act{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}
 .dbtn.act.d0,.dbtn.act.d6{background:#6a2020;border-color:#6a2020}
-.srch{width:100%;padding:5px 9px;background:var(--sf2);border:1px solid var(--bd);border-radius:4px;color:var(--tx);font-size:13px;outline:none;transition:.1s}
-.srch:focus{border-color:var(--ac)}
-.cat-wrap{display:flex;gap:3px;flex-wrap:wrap}
-.cchip{padding:2px 7px;border-radius:10px;border:1px solid var(--bd);background:transparent;color:var(--mt);font-size:11px;white-space:nowrap;transition:.1s}
+
+/* カテゴリ: 1行横スクロール */
+.cat-wrap{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:3px;padding-bottom:2px}
+.cat-wrap::-webkit-scrollbar{height:3px}
+.cat-wrap::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.cchip{padding:2px 8px;border-radius:10px;border:1px solid var(--bd);background:transparent;color:var(--mt);font-size:11px;white-space:nowrap;flex-shrink:0;transition:.1s}
 .cchip:hover{border-color:var(--ac);color:var(--ac)}
 .cchip.act{background:var(--sf3);border-color:var(--ac);color:var(--ac)}
+
+/* 装備リスト */
 .eq-list{flex:1;overflow-y:auto;padding:3px 0}
 .eq-list::-webkit-scrollbar{width:3px}
 .eq-list::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.eq-count{padding:2px 10px;font-size:10px;color:var(--mt);text-align:right}
 .eq-chdr{padding:3px 9px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--mt);background:var(--sf2);position:sticky;top:0;z-index:1}
-.eq-row{display:flex;align-items:center;gap:8px;padding:6px 8px;min-height:56px;cursor:pointer;border-left:3px solid transparent;transition:.1s}
+.eq-row{display:flex;align-items:center;gap:7px;padding:5px 8px;min-height:54px;cursor:pointer;border-left:3px solid transparent;transition:.1s}
 .eq-row:hover{background:var(--sf2);border-left-color:var(--ac2)}
 .eq-row.sel{background:rgba(32,112,184,.08);border-left-color:var(--gd3)}
 .eq-row.sel .eq-name{color:var(--gd3)}
-.eq-name{flex:1;font-size:12px;line-height:1.4;color:var(--tx)}
+.eq-name{flex:1;font-size:12px;line-height:1.3;color:var(--tx)}
 .eq-arr{color:var(--mt);font-size:10px;flex-shrink:0}
-/* Image box */
+
+/* 装備画像ボックス */
 .ib{flex-shrink:0;border-radius:4px;overflow:hidden;background:var(--sf3);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;position:relative}
 .ib img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;display:block}
 .ib .fbk{display:none;font-size:9px;color:var(--mt);text-align:center;padding:2px;word-break:break-all;width:100%;height:100%;align-items:center;justify-content:center}
 .ib.miss img{display:none}
 .ib.miss .fbk{display:flex}
-/* CANVAS AREA */
+
+/* ===== CANVAS AREA ===== */
 .canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .empty-st,.load-st{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:12px;color:var(--mt);text-align:center}
 .load-box{background:var(--sf2);border:2px dashed var(--bd2);border-radius:12px;padding:36px 52px;cursor:pointer;transition:.2s;max-width:420px;width:90%}
@@ -87,14 +87,9 @@ button,input{font-family:inherit;cursor:pointer}
 .load-box h2{font-size:15px;color:var(--wh);margin-bottom:8px}
 .load-box p{font-size:12px;color:var(--mt);line-height:1.7;margin-bottom:18px}
 .load-pbtn{padding:8px 22px;background:var(--ac);border:none;border-radius:5px;color:#fff;font-size:13px;font-weight:700}
-/* TARGET STRIP */
-.tgt-strip{
-  flex-shrink:0;
-  background:linear-gradient(90deg,#04100a 0%,#091c12 100%);
-  border-bottom:2px solid var(--gn);
-  padding:8px 16px;
-  display:flex;align-items:center;gap:12px;
-}
+
+/* ターゲットストリップ */
+.tgt-strip{flex-shrink:0;background:linear-gradient(90deg,#04100a,#091c12);border-bottom:2px solid var(--gn);padding:8px 16px;display:flex;align-items:center;gap:12px}
 .tgt-strip .ib{width:52px;height:52px;border:2px solid var(--gn2)}
 .tgt-info{flex:1;min-width:0}
 .tgt-eyebrow{font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gn2);margin-bottom:2px}
@@ -108,61 +103,71 @@ button,input{font-family:inherit;cursor:pointer}
 .tstat.dev{border-color:rgba(170,120,220,.3);color:#aa78dc;background:rgba(170,120,220,.06)}
 .tstat.imp{border-color:rgba(210,140,180,.3);color:#d28cb4;background:rgba(210,140,180,.06)}
 .tstat-lbl{opacity:.7;margin-right:2px}
-/* ROUTE TABS */
+
+/* ルートタブ */
 .route-tabs{flex-shrink:0;display:flex;background:var(--sf2);border-bottom:1px solid var(--bd);padding:0 16px;gap:2px}
 .rtab{padding:6px 14px;font-size:12px;color:var(--mt);border:none;background:transparent;border-bottom:2px solid transparent;cursor:pointer;transition:.1s;white-space:nowrap}
 .rtab:hover{color:var(--tx)}
 .rtab.act{color:var(--ac2);border-bottom-color:var(--ac2);font-weight:700}
-/* FLOW SCROLL */
-.flow-scroll{flex:1;overflow:auto;padding:20px 20px 40px}
+
+/* ===== 3行フローレイアウト ===== */
+/* 矢印をノードカード行に閉じ込めることで上下の高さに無関係に正確に中央接続される */
+.flow-scroll{flex:1;overflow:auto;padding:24px 20px 40px}
 .flow-scroll::-webkit-scrollbar{width:6px;height:6px}
 .flow-scroll::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
-/* FLOW ROW */
-.flow-row{display:flex;align-items:flex-start;gap:0;width:max-content;min-width:100%}
-/* Column layout */
-.fcol{display:flex;flex-direction:column;align-items:center;width:240px}
-.fcol.narrow{width:160px}
-/* Connector arrow between columns */
-.farrow{
-  flex-shrink:0;align-self:center;
-  width:32px;height:2px;background:var(--bd2);position:relative;
+
+.flow-3row{width:max-content;min-width:100%}
+
+/* 艦船行: 下端揃え → コネクタがノードとぴったり接する */
+.flow-ships-row{display:flex;align-items:flex-end;width:max-content}
+/* ノード+矢印行: 中央揃え → 矢印が必ずノード中央に接続される */
+.flow-nodes-row{display:flex;align-items:center;width:max-content}
+/* 素材行: 上端揃え → コネクタがノードとぴったり接する */
+.flow-mats-row{display:flex;align-items:flex-start;width:max-content}
+
+.fcol-top{width:240px;display:flex;flex-direction:column;align-items:center}
+.fcol-mid{width:240px}
+.fcol-bot{width:240px;display:flex;flex-direction:column}
+.fcol-top.narrow,.fcol-mid.narrow,.fcol-bot.narrow{width:164px}
+
+/* 縦コネクタ (艦船↔ノード, ノード↔素材) */
+.v-conn{width:1px;height:10px;background:var(--bd2);flex-shrink:0;align-self:center}
+
+/* 矢印列 (非矢印列はスペーサー) */
+.fg-gap{width:68px;flex-shrink:0}
+.fg-arrow{
+  width:68px;flex-shrink:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:4px;padding:0 4px;
 }
-.farrow::after{
+/* 矢印ライン */
+.fa-line{width:100%;height:2px;background:var(--bd2);position:relative;flex-shrink:0}
+.fa-line::after{
   content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%);
   border-top:5px solid transparent;border-bottom:5px solid transparent;
   border-left:8px solid var(--bd2);
 }
-/* SHIPS SECTION */
-.ships-section{
-  min-height:8px;margin-bottom:6px;
-  display:flex;flex-wrap:wrap;gap:4px;justify-content:center;
-  max-width:240px;
-}
-/* [FIX2] 艦娘バナーを 240x60 で表示 */
-.ship-chip{
-  display:flex;flex-direction:column;align-items:center;gap:3px;
-  background:var(--sf2);border:1px solid rgba(180,136,30,.25);
-  border-radius:5px;padding:4px 5px;
-  font-size:10px;color:var(--gd2);line-height:1.2;
-  max-width:260px;text-align:center;
-}
-.ship-portrait{
-  width:240px;height:60px;
-  object-fit:cover;object-position:center;
-  image-rendering:pixelated;
-  background:rgba(0,0,0,.3);
-  border-radius:3px;
-  flex-shrink:0;
-}
+/* 改修更新矢印はゴールドカラー */
+.fg-arrow.upd .fa-line{background:var(--gd2)}
+.fg-arrow.upd .fa-line::after{border-left-color:var(--gd2)}
+.fa-label{font-size:9px;color:var(--mt);white-space:nowrap;text-align:center;line-height:1.3}
+.fg-arrow.upd .fa-label{color:var(--gd2);font-weight:700}
+
+/* 艦船セクション */
+.ships-section{min-height:4px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center;width:100%}
+.ship-chip{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--sf2);border:1px solid rgba(180,136,30,.25);border-radius:5px;padding:4px 5px;font-size:10px;color:var(--gd2);max-width:70px;text-align:center}
+.ship-portrait{width:40px;height:60px;object-fit:contain;object-position:top center;image-rendering:pixelated;background:rgba(0,0,0,.3);border-radius:3px;flex-shrink:0}
 .ship-name{font-size:10px;line-height:1.2;color:var(--gd2);word-break:break-all}
-.ships-conn{width:1px;height:10px;background:var(--bd2);margin:0 auto}
-/* FLOW NODE CARDS */
-.fnode{width:100%;border-radius:8px;overflow:hidden;border:1px solid var(--bd2);position:relative;background:var(--sf2)}
+
+/* ===== フローノードカード ===== */
+.fnode{width:100%;border-radius:8px;overflow:hidden;border:1px solid var(--bd2);background:var(--sf2)}
 .fnode.source{border-color:#2a5aaa;background:linear-gradient(160deg,#0e1f3e,#0c1830)}
 .fnode.step0{border-color:#2a4a9a;background:linear-gradient(160deg,#101828,#0e1a30)}
 .fnode.step1{border-color:#4a2a9a;background:linear-gradient(160deg,#141028,#100e2e)}
 .fnode.update{border-color:#9a7010;background:linear-gradient(160deg,#1e1608,#1a1206)}
 .fnode.target{border-color:#1a8840;background:linear-gradient(160deg,#08200e,#061a0c)}
+
 .fn-hdr{padding:8px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.06)}
 .fn-icon{flex-shrink:0;border-radius:5px;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .fn-icon img{object-fit:contain;image-rendering:pixelated;width:100%;height:100%}
@@ -170,23 +175,40 @@ button,input{font-family:inherit;cursor:pointer}
 .fn-icon.miss img{display:none}
 .fn-icon.miss .fbk{display:flex}
 .fn-title{flex:1;min-width:0}
-.fn-type{font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:2px}
+.fn-type{font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
 .fn-name{font-size:13px;font-weight:700;line-height:1.3;word-break:break-all}
-.fnode.source .fn-type{color:#6090e0} .fnode.source .fn-name{color:#9abff8}
-.fnode.step0 .fn-type{color:#5080d8} .fnode.step0 .fn-name{color:#7aa0f0}
-.fnode.step1 .fn-type{color:#8060d8} .fnode.step1 .fn-name{color:#a080f0}
+.fn-cnt{flex-shrink:0;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--wh)}
+.fn-body{padding:8px 12px;display:flex;flex-direction:column;gap:6px}
+.fn-sec{display:flex;flex-direction:column;gap:3px}
+.fn-sec-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--mt)}
+
+.fnode.source .fn-type{color:#6090e0}  .fnode.source .fn-name{color:#9abff8}
+.fnode.step0 .fn-type{color:#5080d8}   .fnode.step0 .fn-name{color:#7aa0f0}
+.fnode.step1 .fn-type{color:#8060d8}   .fnode.step1 .fn-name{color:#a080f0}
 .fnode.update .fn-type{color:var(--gd2)} .fnode.update .fn-name{color:var(--gd3)}
 .fnode.target .fn-type{color:var(--gn2)} .fnode.target .fn-name{color:var(--gn3)}
-.fn-cnt{flex-shrink:0;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--wh)}
-.fn-body{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
-.fn-sec{display:flex;flex-direction:column;gap:4px}
-.fn-sec-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--mt)}
-.days-row{display:flex;gap:3px;flex-wrap:wrap}
+
+/* 起点装備が改修更新で入手可能バッジ */
+.upgr-badge{
+  display:inline-block;padding:1px 5px;
+  background:rgba(32,112,184,.18);border:1px solid rgba(56,160,232,.45);
+  border-radius:3px;font-size:9px;color:var(--ac2);
+  text-transform:none;letter-spacing:0;white-space:nowrap;
+}
+.src-upgr-info{
+  padding:5px 7px;background:rgba(32,112,184,.08);
+  border:1px solid rgba(56,160,232,.2);border-radius:4px;
+  font-size:10px;color:var(--ac2);line-height:1.5;
+}
+
+/* 曜日ピル */
+.days-row{display:flex;gap:2px;flex-wrap:wrap}
 .dpill{display:inline-block;padding:2px 5px;font-size:10px;font-weight:700;border-radius:2px}
 .dpill.on{background:rgba(32,112,184,.2);border:1px solid rgba(32,112,184,.4);color:var(--ac2)}
 .dpill.off{background:transparent;border:1px solid transparent;color:var(--dim)}
 .dpill.wk{background:rgba(120,32,32,.15);border-color:rgba(120,32,32,.35);color:#d06060}
-/* Resource boxes */
+
+/* 資源ボックス */
 .res-row{display:flex;flex-wrap:wrap;gap:4px}
 .rb{text-align:center;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:3px 6px;min-width:50px}
 .rb .rl{font-size:9px;color:var(--mt)}
@@ -195,115 +217,35 @@ button,input{font-family:inherit;cursor:pointer}
 .rb.rf .rv{color:#60a8f8} .rb.ra .rv{color:#e0cc40} .rb.rs .rv{color:#60c060} .rb.rb2 .rv{color:#d08040}
 .rb.rd .rv{color:#a070d0} .rb.ri .rv{color:#d080b0}
 .rb.gld{border-color:rgba(200,160,40,.35)}
-/* MATERIALS SECTION */
-.mats-conn{width:1px;height:16px;background:var(--bd2);margin:0 auto}
-.mats-section{
-  width:100%;background:rgba(0,0,0,.15);border:1px solid var(--bd);border-radius:6px;
-  padding:10px 12px;display:flex;flex-direction:column;gap:6px;
-}
+
+/* ===== 素材セクション ===== */
+.mats-section{width:100%;background:rgba(0,0,0,.15);border:1px solid var(--bd);border-radius:6px;padding:7px 9px;display:flex;flex-direction:column;gap:4px}
 .mat-item{display:flex;flex-direction:column;gap:2px}
-.mat-chip{
-  display:flex;align-items:center;gap:6px;
-  background:var(--sf2);border:1px solid var(--bd2);border-radius:4px;
-  padding:5px 9px;font-size:11px;
-}
+.mat-chip{display:flex;align-items:center;gap:5px;background:var(--sf2);border:1px solid var(--bd2);border-radius:4px;padding:3px 7px;font-size:11px}
 .mat-img{width:28px;height:28px;object-fit:contain;image-rendering:pixelated;flex-shrink:0;background:rgba(0,0,0,.2);border-radius:3px}
 .mat-name{flex:1;color:var(--tx);line-height:1.3}
 .mat-cnt{color:var(--gd2);font-weight:700;white-space:nowrap}
-/* 改修更新可バッジ（改修更新ルートが下に別フローとして存在することを示す） */
-.mat-uptag{
-  font-size:9px;padding:1px 5px;
-  background:rgba(32,112,184,.15);border:1px solid rgba(56,160,232,.35);
-  color:var(--ac2);border-radius:2px;white-space:nowrap;
-  display:inline-flex;align-items:center;gap:2px;
-}
+.mat-uptag{font-size:9px;padding:1px 4px;background:rgba(32,112,184,.12);border:1px solid rgba(32,112,184,.25);color:var(--ac2);border-radius:2px;white-space:nowrap}
+
+/* 素材インラインチェーン */
+.mat-chain{margin-left:12px;padding:5px 8px;border-left:2px solid var(--ac);background:rgba(32,112,184,.04);border-radius:0 4px 4px 0;font-size:11px}
+.mat-chain.d1{border-left-color:var(--gd);background:rgba(168,120,32,.04)}
+.mat-chain.d2{border-left-color:var(--gn2);background:rgba(34,160,88,.04)}
+.mat-chain-ttl{font-size:9px;font-weight:700;letter-spacing:.06em;margin-bottom:4px;padding:2px 5px;border-radius:2px;display:inline-block}
+.mat-chain.d0 .mat-chain-ttl{color:var(--ac2);background:rgba(32,112,184,.12)}
+.mat-chain.d1 .mat-chain-ttl{color:var(--gd2);background:rgba(168,120,32,.12)}
+.mat-chain.d2 .mat-chain-ttl{color:var(--gn2);background:rgba(34,160,88,.12)}
+.mat-chain-route{background:var(--sf);border:1px solid var(--bd);border-radius:4px;margin-bottom:4px;overflow:hidden}
+.mcr-hdr{padding:4px 8px;background:var(--sf2);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.mcr-src{font-size:11px;font-weight:700;color:var(--ac2)}
+.mcr-cat{font-size:9px;color:var(--mt)}
+.mcr-upd-label{font-size:9px;color:var(--gd2);margin-left:auto;white-space:nowrap}
+.mcr-body{padding:5px 8px;display:flex;flex-direction:column;gap:4px}
+.mcr-step{padding-left:8px;border-left:2px solid var(--bd);padding-top:2px}
+.mcr-step-lbl{font-size:9px;color:var(--st2);font-weight:700;margin-bottom:2px}
+
 .nomatch{padding:4px 8px;background:rgba(80,24,24,.2);border:1px solid rgba(150,48,48,.25);border-radius:3px;font-size:11px;color:#b06060}
-
-/* ===================================================
-   SUB-FLOW SECTION
-   メインフローの下に別フローとして改修更新ルートを表示する
-   =================================================== */
-.sub-flow-block {
-  /* 各サブフローのまとまり（コネクタ + フローrow） */
-}
-
-/* 縦方向コネクタ（メインフローとサブフローをつなぐ矢印） */
-.sfc-outer {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  /* depth に応じてインデントは JS 側で inline style で付与 */
-  margin-top: 8px;
-}
-.sfc-vbar {
-  /* 縦線部分 */
-  width: 3px;
-  border-radius: 2px;
-  flex-shrink: 0;
-  margin-right: 12px;
-  min-height: 100%;
-}
-.sfc-inner {
-  flex: 1;
-  min-width: 0;
-}
-/* コネクタヘッダー（矢印 + 素材名） */
-.sfc-hdr {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px 6px 10px;
-  border-radius: 5px;
-  margin-bottom: 8px;
-  width: max-content;
-  max-width: 100%;
-}
-.sfc-arrow-v {
-  /* ↓ 矢印アイコン */
-  font-size: 18px;
-  font-weight: 900;
-  line-height: 1;
-  flex-shrink: 0;
-}
-.sfc-hdr-icon {
-  width: 28px; height: 28px;
-  object-fit: contain; image-rendering: pixelated;
-  background: rgba(0,0,0,.3); border-radius: 4px;
-  flex-shrink: 0;
-}
-.sfc-hdr-icon-box {
-  width: 28px; height: 28px;
-  background: var(--sf3); border: 1px solid var(--bd);
-  border-radius: 4px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
-}
-.sfc-hdr-icon-box img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
-.sfc-hdr-name {
-  font-size: 13px; font-weight: 700; white-space: nowrap;
-}
-.sfc-hdr-tag {
-  font-size: 10px; white-space: nowrap; opacity: .7;
-}
-.sfc-routes-note {
-  font-size: 10px; opacity: .6; white-space: nowrap;
-}
-
-/* depth 0: 青系 */
-.sfc-d0 .sfc-vbar { background: var(--ac); }
-.sfc-d0 .sfc-hdr  { background: rgba(32,112,184,.10); border: 1px solid rgba(56,160,232,.25); }
-.sfc-d0 .sfc-arrow-v  { color: var(--ac2); }
-.sfc-d0 .sfc-hdr-name { color: var(--ac2); }
-/* depth 1: 金系 */
-.sfc-d1 .sfc-vbar { background: var(--gd); }
-.sfc-d1 .sfc-hdr  { background: rgba(168,120,32,.10); border: 1px solid rgba(208,168,48,.25); }
-.sfc-d1 .sfc-arrow-v  { color: var(--gd2); }
-.sfc-d1 .sfc-hdr-name { color: var(--gd2); }
-/* depth 2: 緑系 */
-.sfc-d2 .sfc-vbar { background: var(--gn); }
-.sfc-d2 .sfc-hdr  { background: rgba(24,104,56,.10); border: 1px solid rgba(34,160,88,.25); }
-.sfc-d2 .sfc-arrow-v  { color: var(--gn2); }
-.sfc-d2 .sfc-hdr-name { color: var(--gn2); }
+.depth-end{font-size:10px;color:var(--mt);font-style:italic;padding:2px 6px}
 </style>
 </head>
 <body>
@@ -331,41 +273,40 @@ button,input{font-family:inherit;cursor:pointer}
   </div>
 </div>
 <script>
-/* =============================================
-STATE
-============================================= */
+/* ============================================================
+   STATE
+   ============================================================ */
 const G={data:null,lookup:{},targets:new Map(),list:[],sel:null,day:-1,search:'',cat:'',route:0};
 const DAYS=['日','月','火','水','木','金','土'];
 const RNAMES=['燃料','弾薬','鋼材','ボーキ'];
 const RCLS=['rf','ra','rs','rb2'];
 
-/* =============================================
-IMAGE HELPERS
-============================================= */
+/* ============================================================
+   IMAGE HELPERS
+   ============================================================ */
 function eqImg(n){
   return 'image/item/'+n.replace(/＋/g,'+').replace(/[／\/]/g,'^')
     .replace(/砲([A-Fa-f])/g,(_,c)=>String.fromCodePoint(0x78320+parseInt(c,16)))+'.png';
 }
 function shImg(n){return 'image/ship/'+n+'.png';}
-function mkIb(nm,w,h){
+function mkIb(nm,w,h,xc=''){
   const s=eqImg(nm),fb=esc(nm.slice(0,5));
-  return `<div class="ib" style="width:${w}px;height:${h}px"><img src="${s}" alt="${esc(nm)}" loading="lazy" onerror="this.parentNode.classList.add('miss')"><div class="fbk">${fb}</div></div>`;
+  return `<div class="ib ${xc}" style="width:${w}px;height:${h}px"><img src="${s}" alt="${esc(nm)}" loading="lazy" onerror="this.parentNode.classList.add('miss')"><div class="fbk">${fb}</div></div>`;
 }
 function mkFnIcon(nm,w,h){
   const s=eqImg(nm),fb=esc(nm.slice(0,4));
   return `<div class="fn-icon" style="width:${w}px;height:${h}px;background:rgba(0,0,0,.4);border-radius:5px;overflow:hidden"><img src="${s}" alt="${esc(nm)}" loading="lazy" onerror="this.parentNode.classList.add('miss')"><div class="fbk">${fb}</div></div>`;
 }
 
-/* =============================================
-INIT / LOAD
-============================================= */
+/* ============================================================
+   INIT / LOAD
+   ============================================================ */
 addEventListener('DOMContentLoaded',async()=>{
   try{const r=await fetch('./kaisyu.json');if(r.ok){init(await r.json());return;}}catch(_){}
   showLoad();
 });
 function showLoad(){
-  const mb=document.getElementById('mainBody');
-  const ls=document.getElementById('loadSt');
+  const mb=document.getElementById('mainBody'),ls=document.getElementById('loadSt');
   if(!mb.contains(ls)){mb.innerHTML='';mb.appendChild(ls);}
   ls.style.display='';
   document.getElementById('reloadBtn').style.display='block';
@@ -400,48 +341,43 @@ function init(json){
   buildUI();
 }
 
-/* =============================================
-MAIN UI BUILD
-============================================= */
+/* ============================================================
+   MAIN UI
+   ============================================================ */
 function buildUI(){
   const mb=document.getElementById('mainBody');
   mb.innerHTML=`
 <aside class="sb" id="sb">
-<div class="sb-sec">
-<span class="sb-lbl">曜日フィルター</span>
-<div class="day-row">
-<button class="dbtn act" data-d="-1" onclick="setDay(-1)">全</button>
-${DAYS.map((d,i)=>`<button class="dbtn d${i}" data-d="${i}" onclick="setDay(${i})">${d}</button>`).join('')}
-</div>
-</div>
-<div class="sb-sec">
-<span class="sb-lbl">カテゴリ</span>
-<div class="cat-wrap" id="catW">
-<button class="cchip act" data-c="" onclick="setCat('')">全て</button>
-</div>
-</div>
-<div class="sb-sec">
-<span class="sb-lbl">装備名検索</span>
-<input class="srch" type="text" placeholder="装備名を入力..." oninput="setSearch(this.value)">
-</div>
-<div class="eq-list" id="eqList"></div>
+  <div class="sb-sec">
+    <span class="sb-lbl">装備名検索</span>
+    <input class="srch" type="text" placeholder="装備名を入力..." oninput="setSearch(this.value)">
+  </div>
+  <div class="sb-sec">
+    <span class="sb-lbl">曜日フィルター</span>
+    <div class="day-row">
+      <button class="dbtn act" data-d="-1" onclick="setDay(-1)">全</button>
+      ${DAYS.map((d,i)=>`<button class="dbtn d${i}" data-d="${i}" onclick="setDay(${i})">${d}</button>`).join('')}
+    </div>
+  </div>
+  <div class="sb-sec">
+    <span class="sb-lbl">カテゴリ</span>
+    <div class="cat-wrap" id="catW">
+      <button class="cchip act" data-c="" onclick="setCat('')">全て</button>
+    </div>
+  </div>
+  <div class="eq-list" id="eqList"></div>
 </aside>
 <div class="canvas-wrap" id="canvasWrap">
-<div class="empty-st">
-<div style="font-size:28px;color:var(--bd2);letter-spacing:.1em">---</div>
-<div>左のリストから装備を選んでください</div>
-<div style="font-size:11px;color:var(--mt)">改修更新ツリーが表示されます</div>
-</div>
+  <div class="empty-st">
+    <div style="font-size:28px;color:var(--bd2)">---</div>
+    <div>左のリストから装備を選んでください</div>
+    <div style="font-size:11px;color:var(--mt)">改修更新ツリーが表示されます</div>
+  </div>
 </div>`;
   buildCatChips();
   renderList();
 }
 
-/* =============================================
-[FIX1] カテゴリチップのラベル
-「艦上爆撃機」→「艦爆」に短縮、「水上爆撃機」はそのまま表示
-（元コードは .replace('水上','') で両方が「爆撃機」になっていた）
-============================================= */
 function buildCatChips(){
   const cats=new Set();
   for(const[,srcs] of G.targets)for(const s of srcs)cats.add(s.cat);
@@ -449,26 +385,34 @@ function buildCatChips(){
   Array.from(cats).sort().forEach(c=>{
     const b=document.createElement('button');
     b.className='cchip';b.dataset.c=c;
-    const label=c.replace(/[主副]砲/,'砲').replace('艦上爆撃機','艦爆').replace('艦上','')||c.slice(0,4);
-    b.textContent=label;
+    b.textContent=c.replace(/[主副]砲/,'砲').replace('艦上','').replace('水上','')||c.slice(0,4);
     b.title=c;b.onclick=()=>setCat(c);
     cw.appendChild(b);
   });
 }
 
-/* =============================================
-FILTERS
-============================================= */
-function setDay(d){G.day=d;document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('act',+b.dataset.d===d));if(G.sel)renderTree(G.sel);renderList();}
-function setCat(c){G.cat=c;document.querySelectorAll('.cchip').forEach(b=>b.classList.toggle('act',b.dataset.c===c));renderList();}
+/* ============================================================
+   FILTERS
+   ============================================================ */
+function setDay(d){
+  G.day=d;
+  document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('act',+b.dataset.d===d));
+  if(G.sel)renderTree(G.sel);
+  renderList();
+}
+function setCat(c){
+  G.cat=c;
+  document.querySelectorAll('.cchip').forEach(b=>b.classList.toggle('act',b.dataset.c===c));
+  renderList();
+}
 function setSearch(t){G.search=t.trim();renderList();}
 
-/* =============================================
-EQUIPMENT LIST
-============================================= */
+/* ============================================================
+   EQUIPMENT LIST
+   ============================================================ */
 function renderList(){
   const c=document.getElementById('eqList');if(!c)return;
-  const{search,day,cat}=G;const grp={};
+  const{search,day,cat}=G;const grp={};let total=0;
   for(const t of G.list){
     const srcs=G.targets.get(t);if(!srcs)continue;
     const cats=srcs.map(s=>s.cat);
@@ -477,28 +421,24 @@ function renderList(){
     if(day>=0&&!srcs.some(s=>s.item.youbi&&s.item.youbi[day]===1))continue;
     const dc=cat||cats[0]||'その他';
     if(!grp[dc])grp[dc]=[];
-    grp[dc].push(t);
+    grp[dc].push(t);total++;
   }
-  let h='';
-  for(const[c,items] of Object.entries(grp).sort()){
-    h+=`<div class="eq-chdr">${esc(c)}</div>`;
+  let h=`<div class="eq-count">${total}件</div>`;
+  for(const[dc,items] of Object.entries(grp).sort()){
+    h+=`<div class="eq-chdr">${esc(dc)}</div>`;
     for(const t of items){
       const sel=G.sel===t;
-      h+=`<div class="eq-row${sel?' sel':''}" onclick="selTgt('${esc(t)}')">
-${mkIb(t,44,44)}
-<span class="eq-name">${esc(t)}</span>
-<span class="eq-arr">›</span>
-</div>`;
+      h+=`<div class="eq-row${sel?' sel':''}" onclick="selTgt('${esc(t)}')">${mkIb(t,44,44)}<span class="eq-name">${esc(t)}</span><span class="eq-arr">›</span></div>`;
     }
   }
-  if(!h)h=`<div style="padding:16px;color:var(--mt);text-align:center;font-size:12px">該当なし</div>`;
+  if(total===0)h=`<div style="padding:16px;color:var(--mt);text-align:center;font-size:12px">該当なし</div>`;
   c.innerHTML=h;
 }
 function selTgt(n){G.sel=n;G.route=0;renderList();renderTree(n);}
 
-/* =============================================
-RENDER TREE（全体組み立て）
-============================================= */
+/* ============================================================
+   RENDER TREE
+   ============================================================ */
 function renderTree(tgt){
   const cw=document.getElementById('canvasWrap');if(!cw)return;
   const srcs=G.targets.get(tgt);
@@ -506,161 +446,49 @@ function renderTree(tgt){
   const p=srcs[G.route]||srcs[0];
   const tot=calcCost(p.equip,tgt);
   let h=`<div class="tgt-strip">
-${mkIb(tgt,52,52)}
-<div class="tgt-info">
-<div class="tgt-eyebrow">目標装備</div>
-<div class="tgt-name">${esc(tgt)}</div>
-<div class="tgt-stats">
-${tot.res.map((v,i)=>v>0?`<span class="tstat ${['fuel','ammo','steel','baux'][i]}"><span class="tstat-lbl">${RNAMES[i]}</span>${v}</span>`:'').join('')}
-${tot.devMin>0?`<span class="tstat dev"><span class="tstat-lbl">開発</span>通常${tot.devMin}/確実${tot.devMax}</span>`:''}
-${tot.impMin>0?`<span class="tstat imp"><span class="tstat-lbl">改修</span>通常${tot.impMin}/確実${tot.impMax}</span>`:''}
-</div>
-</div>
-</div>`;
+    ${mkIb(tgt,52,52)}
+    <div class="tgt-info">
+      <div class="tgt-eyebrow">目標装備</div>
+      <div class="tgt-name">${esc(tgt)}</div>
+      <div class="tgt-stats">
+        ${tot.res.map((v,i)=>v>0?`<span class="tstat ${['fuel','ammo','steel','baux'][i]}"><span class="tstat-lbl">${RNAMES[i]}</span>${v}</span>`:'').join('')}
+        ${tot.devMin>0?`<span class="tstat dev"><span class="tstat-lbl">開発</span>通常${tot.devMin}/確実${tot.devMax}</span>`:''}
+        ${tot.impMin>0?`<span class="tstat imp"><span class="tstat-lbl">改修</span>通常${tot.impMin}/確実${tot.impMax}</span>`:''}
+      </div>
+    </div>
+  </div>`;
   if(srcs.length>1){
     h+=`<div class="route-tabs">${srcs.map((_,i)=>`<button class="rtab${G.route===i?' act':''}" onclick="selRoute(${i},'${esc(tgt)}')">ルート${i+1}</button>`).join('')}</div>`;
   }
-  h+=`<div class="flow-scroll">`;
-  h+=buildRouteFlow(tgt,p);
-  h+=`</div>`;
+  h+=`<div class="flow-scroll">${buildRouteFlow(tgt,srcs[G.route]||srcs[0])}</div>`;
   cw.innerHTML=h;
 }
 function selRoute(i,tgt){G.route=i;renderTree(tgt);}
 
-/* =============================================
-buildRouteFlow
-  メインフロー行を出力したあと、
-  サブフロー（改修更新可な素材の入手ルート）を
-  矢印つき別行として下に積み上げる。
-  深さ最大 3、重複防止のため visited Set を使う。
-============================================= */
+/* ============================================================
+   BUILD ROUTE FLOW
+   3行構造: 艦船行 / ノード+矢印行 / 素材行
+   → ノード行に矢印を閉じ込めることで高さに無関係に中央接続
+   ============================================================ */
 function buildRouteFlow(tgtNm,src){
-  // --- メインフロー ---
-  let h=`<div class="flow-row">${buildFlowRow(tgtNm,src)}</div>`;
-
-  // --- サブフロー収集（BFS）---
-  // visited: フロー済み装備名のSet（循環・重複を防ぐ）
-  const visited=new Set([tgtNm,src.src]);
-
-  // キューに {matNm, depth} を積む
-  // depth 0 = メインフローの直接素材
-  // depth 1, 2 = サブフローの素材
-  const queue=[];
-
-  // メインフローから改修更新可な素材を収集
-  collectUpgradeableMats(tgtNm,src,visited,queue,0);
-
-  // 起点装備自身が改修更新で入手可能な場合もサブフローとして表示
-  if(G.targets.has(src.src)&&!visited.has(src.src)){
-    visited.add(src.src);
-    queue.push({matNm:src.src,depth:0});
-  }
-
-  // BFS でキューを処理
-  let qi=0;
-  while(qi<queue.length&&qi<20){// 安全上限 20
-    const{matNm,depth}=queue[qi++];
-    if(depth>=3)continue;
-    const matSrcs=G.targets.get(matNm);
-    if(!matSrcs||!matSrcs.length)continue;
-    const matSrc=matSrcs[0];
-
-    // サブフローブロックを出力
-    h+=buildSubFlowBlock(matNm,matSrcs,depth);
-
-    // このサブフロー内から更にサブフローを収集
-    collectUpgradeableMats(matNm,matSrc,visited,queue,depth+1);
-  }
-
-  return h;
-}
-
-/* =============================================
-collectUpgradeableMats
-  指定ルートの各ステップ素材・更新素材のうち
-  改修更新可（G.targets に存在）なものを queue に追加する
-============================================= */
-function collectUpgradeableMats(tgtNm,src,visited,queue,nextDepth){
-  const{equip,item:updItem}=src;
-  const stepKeys=Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
-  for(const kn of stepKeys){
-    const items=equip.info[String(kn)]||[];
-    const filt=filtTgt(items,tgtNm,G.day);
-    const rep=filt.length>0?filt[0]:(items[0]||null);
-    if(rep&&rep.soubi){
-      for(const[nm] of rep.soubi){
-        if(!visited.has(nm)&&G.targets.has(nm)){
-          visited.add(nm);
-          queue.push({matNm:nm,depth:nextDepth});
-        }
-      }
-    }
-  }
-  if(updItem&&updItem.soubi){
-    for(const[nm] of updItem.soubi){
-      if(!visited.has(nm)&&G.targets.has(nm)){
-        visited.add(nm);
-        queue.push({matNm:nm,depth:nextDepth});
-      }
-    }
-  }
-}
-
-/* =============================================
-buildSubFlowBlock
-  コネクタ（↓ 矢印 + 素材名）＋ フロー行 を組み立てる
-  depth に応じて色・インデントを変える
-============================================= */
-function buildSubFlowBlock(matNm,matSrcs,depth){
-  const dc=Math.min(depth,2);
-  const depthCls=`sfc-d${dc}`;
-  const arrowColor=['var(--ac2)','var(--gd2)','var(--gn2)'][dc];
-  const indentPx=depth*28;
-  const src=matSrcs[0];
-  const routeNote=matSrcs.length>1?`<span class="sfc-routes-note">ルート${matSrcs.length}種中1種</span>`:'';
-
-  let h=`<div class="sub-flow-block ${depthCls}" style="margin-left:${indentPx}px">`;
-
-  // コネクタ行（縦線 + ヘッダー）
-  h+=`<div class="sfc-outer">
-<div class="sfc-vbar"></div>
-<div class="sfc-inner">
-<div class="sfc-hdr">
-<span class="sfc-arrow-v">↓</span>
-<div class="sfc-hdr-icon-box"><img class="sfc-hdr-icon" src="${eqImg(matNm)}" alt="${esc(matNm)}" loading="lazy" onerror="this.style.display='none'"></div>
-<span class="sfc-hdr-name">${esc(matNm)}</span>
-<span class="sfc-hdr-tag">の入手ルート（改修更新）</span>
-${routeNote}
-</div>`;
-
-  // フロー行
-  h+=`<div class="flow-row">${buildFlowRow(matNm,src)}</div>`;
-
-  h+=`</div></div></div>`;
-  return h;
-}
-
-/* =============================================
-buildFlowRow
-  1本の横フローを組み立てる汎用関数。
-  [起点] → [ステップ...] → [★10更新] → [入手]
-  buildRouteFlow とサブフローの両方で使う。
-============================================= */
-function buildFlowRow(tgtNm,src){
   const{src:srcNm,cat:srcCat,equip,item:updItem}=src;
   const stepKeys=Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
-  let h='';
+  const srcCanBeUpgraded=G.targets.has(srcNm);
 
-  // 起点ノード
-  h+=`<div class="fcol">
-<div class="ships-section"></div>
-<div class="ships-conn"></div>
-${buildSourceNode(srcNm,srcCat,equip)}
-<div class="mats-conn"></div>
-<div class="mats-section"><span style="font-size:10px;color:var(--mt)">起点装備</span></div>
-</div>`;
+  /* --- 列データを収集 --- */
+  const cols=[];
 
-  // ステップノード
+  /* 起点装備列 */
+  cols.push({
+    ships:'',
+    node:buildSourceNode(srcNm,srcCat,equip,srcCanBeUpgraded),
+    mats:buildSourceMats(srcNm,srcCanBeUpgraded),
+    arrow:null,
+    upd:false,
+    narrow:false,
+  });
+
+  /* 改修ステップ列 */
   let cumRes=[0,0,0,0],cumDev=[0,0],cumImp=[0,0];
   for(let ki=0;ki<stepKeys.length;ki++){
     const kn=stepKeys[ki];
@@ -674,97 +502,184 @@ ${buildSourceNode(srcNm,srcCat,equip)}
       cumDev[0]+=rep.kaihatu[0]*sc;cumDev[1]+=rep.kaihatu[1]*sc;
       cumImp[0]+=rep.kaisyu[0]*sc;cumImp[1]+=rep.kaisyu[1]*sc;
     }
-    const cls=kn<6?'step0':'step1';
-    const lbl=kn===0?`★0 → ★${nk}`:`★${kn} → ★${nk}`;
+    const disp=filt.length>0?filt:items;
     const shipSet=new Set();
-    for(const it of(filt.length>0?filt:items))for(const s of(it.ship||[]))shipSet.add(s);
-    h+=`<div class="farrow"></div>
-<div class="fcol">
-<div class="ships-section">${renderShips(Array.from(shipSet))}</div>
-<div class="ships-conn"></div>
-${buildStepNode(lbl,sc,cls,filt.length>0?filt:items,equip,tgtNm)}
-<div class="mats-conn"></div>
-${buildMatsSection(filt.length>0?filt:items,equip,sc,cumRes,cumDev,cumImp)}
-</div>`;
+    for(const it of disp)for(const s of(it.ship||[]))shipSet.add(s);
+    cols.push({
+      ships:renderShips(Array.from(shipSet)),
+      node:buildStepNode(kn,nk,sc,kn<6?'step0':'step1',disp,equip,tgtNm,ki+1),
+      mats:buildMatsSection(disp,equip,sc,[...cumRes],[cumDev[0],cumDev[1]],[cumImp[0],cumImp[1]]),
+      arrow:`第${ki+1}段階\n改修 ×${sc}回`,
+      upd:false,
+      narrow:false,
+    });
   }
 
-  // 更新ノード
+  /* 改修更新列 */
   const updShips=new Set(updItem.ship||[]);
-  h+=`<div class="farrow"></div>
-<div class="fcol">
-<div class="ships-section">${renderShips(Array.from(updShips))}</div>
-<div class="ships-conn"></div>
-${buildUpdateNode(tgtNm,updItem,equip)}
-<div class="mats-conn"></div>
-${buildUpdateMats(updItem,equip,cumRes,cumDev,cumImp)}
-</div>`;
+  cols.push({
+    ships:renderShips(Array.from(updShips)),
+    node:buildUpdateNode(tgtNm,updItem,equip),
+    mats:buildUpdateMats(updItem,equip,[...cumRes],[cumDev[0],cumDev[1]],[cumImp[0],cumImp[1]]),
+    arrow:`★10\n改修更新`,
+    upd:true,
+    narrow:false,
+  });
 
-  // 入手ノード
-  h+=`<div class="farrow"></div>
-<div class="fcol narrow">
-<div class="ships-section"></div>
-<div class="ships-conn"></div>
-${buildTargetNode(tgtNm)}
-<div class="mats-conn"></div>
-<div class="mats-section"><span style="font-size:10px;color:var(--gn2)">入手完了</span></div>
-</div>`;
+  /* 完成装備列 */
+  cols.push({
+    ships:'',
+    node:buildTargetNode(tgtNm),
+    mats:`<div class="mats-section"><span style="font-size:10px;color:var(--gn2)">入手完了</span></div>`,
+    arrow:'→ 入手',
+    upd:false,
+    narrow:true,
+  });
 
+  /* --- 3行に組み立て --- */
+  let shH='',ndH='',mtH='';
+  cols.forEach((col,i)=>{
+    const w=col.narrow?164:240;
+    const nc=col.narrow?' narrow':'';
+    if(i>0){
+      /* 矢印: ノード行に入れることで上下の高さと無関係に中央に接続される */
+      const lines=(col.arrow||'').split('\n');
+      const aHtml=`<div class="fa-line"></div>${lines.map(l=>`<div class="fa-label">${esc(l)}</div>`).join('')}`;
+      shH+=`<div class="fg-gap"></div>`;
+      ndH+=`<div class="fg-arrow${col.upd?' upd':''}">${aHtml}</div>`;
+      mtH+=`<div class="fg-gap"></div>`;
+    }
+    /* 艦船行: 下端にv-connを置き、ノード行と接続 */
+    shH+=`<div class="fcol-top${nc}" style="width:${w}px">
+      <div class="ships-section">${col.ships}</div>
+      <div class="v-conn"></div>
+    </div>`;
+    /* ノード行 */
+    ndH+=`<div class="fcol-mid${nc}" style="width:${w}px">${col.node}</div>`;
+    /* 素材行: 上端にv-connを置き、ノード行と接続 */
+    mtH+=`<div class="fcol-bot${nc}" style="width:${w}px">
+      <div class="v-conn"></div>
+      ${col.mats}
+    </div>`;
+  });
+
+  return `<div class="flow-3row">
+    <div class="flow-ships-row">${shH}</div>
+    <div class="flow-nodes-row">${ndH}</div>
+    <div class="flow-mats-row">${mtH}</div>
+  </div>`;
+}
+
+/* ============================================================
+   NODE BUILDERS
+   ============================================================ */
+
+/* 起点装備ノード: 改修更新で入手可能な場合はバッジと注記を表示 */
+function buildSourceNode(nm,cat,equip,canUpgrade){
+  const res=equip.resource;
+  const upgradeNote=canUpgrade
+    ?`<div class="fn-sec"><div class="src-upgr-info">⚡ この装備は改修更新でも入手できます。下の「入手元」欄に取得ルートを表示しています。</div></div>`
+    :'';
+  return `<div class="fnode source">
+<div class="fn-hdr">
+  ${mkFnIcon(nm,48,48)}
+  <div class="fn-title">
+    <div class="fn-type">起点装備 ${canUpgrade?'<span class="upgr-badge">⚡改修更新入手可</span>':''}</div>
+    <div class="fn-name">${esc(nm)}</div>
+  </div>
+</div>
+<div class="fn-body">
+  <div class="fn-sec">
+    <div class="fn-sec-lbl">カテゴリ</div>
+    <div style="font-size:11px;color:var(--mt)">${esc(cat)}</div>
+  </div>
+  <div class="fn-sec">
+    <div class="fn-sec-lbl">基礎資源（1回）</div>
+    <div class="res-row">${res.map((v,i)=>v>0?`<div class="rb ${RCLS[i]}"><div class="rl">${RNAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')||'<span style="font-size:11px;color:var(--mt)">なし</span>'}</div>
+  </div>
+  ${upgradeNote}
+</div>
+</div>`;
+}
+
+/* 起点装備の素材欄: 改修更新入手可能なら入手チェーンを展開表示 */
+function buildSourceMats(nm,canUpgrade){
+  let h=`<div class="mats-section">`;
+  if(canUpgrade){
+    h+=`<div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac2);margin-bottom:5px">⚡ この装備の入手元（改修更新ルート）</div>`;
+    h+=buildMatChain(nm,0,new Set([nm]));
+  } else {
+    h+=`<span style="font-size:10px;color:var(--mt)">起点装備（改修更新では入手不可）</span>`;
+  }
+  h+=`</div>`;
   return h;
 }
 
-/* =============================================
-NODE BUILDERS
-============================================= */
-function buildSourceNode(nm,cat,equip){
-  const res=equip.resource;
-  return `<div class="fnode source">
-<div class="fn-hdr">${mkFnIcon(nm,48,48)}<div class="fn-title"><div class="fn-type">起点装備</div><div class="fn-name">${esc(nm)}</div></div></div>
-<div class="fn-body">
-<div class="fn-sec"><div class="fn-sec-lbl">カテゴリ</div><div style="font-size:11px;color:var(--mt)">${esc(cat)}</div></div>
-<div class="fn-sec"><div class="fn-sec-lbl">基礎資源（1回）</div>
-<div class="res-row">${res.map((v,i)=>v>0?`<div class="rb ${RCLS[i]}"><div class="rl">${RNAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')||'<span style="font-size:11px;color:var(--mt)">なし</span>'}</div>
-</div>
-</div></div>`;
-}
-
-function buildStepNode(lbl,cnt,cls,items,equip,tgtNm){
+/* 改修ステップノード */
+function buildStepNode(kn,nk,sc,cls,items,equip,tgtNm,stepNum){
   const days=items.length>0?items[0].youbi:null;
   const multi=items.length>1;
-  const dayMatch=G.day<0||(days&&days[G.day]===1);
-  return `<div class="fnode ${cls}"${!dayMatch&&G.day>=0?' style="opacity:.5"':''}>
+  const dayOk=G.day<0||(days&&days[G.day]===1);
+  const rangeLabel=kn===0?`★0 → ★${nk}`:`★${kn} → ★${nk}`;
+  return `<div class="fnode ${cls}"${!dayOk&&G.day>=0?' style="opacity:.5"':''}>
 <div class="fn-hdr">
-<div class="fn-title"><div class="fn-type">${esc(lbl)}</div><div class="fn-name" style="font-size:12px">${cnt}回 × 各1回</div></div>
-<div class="fn-cnt">${cnt}回</div>
+  <div class="fn-title">
+    <div class="fn-type">第${stepNum}段階 改修工廠</div>
+    <div class="fn-name">${esc(rangeLabel)}</div>
+  </div>
+  <div class="fn-cnt">${sc}回</div>
 </div>
 <div class="fn-body">
-${!dayMatch&&G.day>=0?`<div class="nomatch">${DAYS[G.day]}曜日は実施不可</div>`:''}
-${multi?`<div style="font-size:10px;color:var(--ac2)">レシピ${items.length}種（代表1種表示）</div>`:''}
-<div class="fn-sec"><div class="fn-sec-lbl">曜日</div><div class="days-row">${renderDays(days)}</div></div>
-</div></div>`;
-}
-
-function buildUpdateNode(tgtNm,updItem,equip){
-  const dayOk=G.day<0||(updItem.youbi&&updItem.youbi[G.day]===1);
-  return `<div class="fnode update"${!dayOk&&G.day>=0?' style="opacity:.5"':''}>
-<div class="fn-hdr">${mkFnIcon(tgtNm,48,48)}<div class="fn-title"><div class="fn-type">★10 改修更新</div><div class="fn-name">${esc(tgtNm)}</div></div></div>
-<div class="fn-body">
-${!dayOk&&G.day>=0?`<div class="nomatch">${DAYS[G.day]}曜日は実施不可</div>`:''}
-<div class="fn-sec"><div class="fn-sec-lbl">曜日</div><div class="days-row">${renderDays(updItem.youbi)}</div></div>
-</div></div>`;
-}
-
-function buildTargetNode(nm){
-  return `<div class="fnode target">
-<div class="fn-hdr">${mkFnIcon(nm,48,48)}<div class="fn-title"><div class="fn-type">入手装備</div><div class="fn-name">${esc(nm)}</div></div></div>
-<div class="fn-body"><div style="font-size:11px;color:var(--gn2)">改修更新で入手完了</div></div>
+  ${!dayOk&&G.day>=0?`<div class="nomatch">${DAYS[G.day]}曜日は実施不可</div>`:''}
+  ${multi?`<div style="font-size:10px;color:var(--ac2)">レシピ${items.length}種（代表1種表示）</div>`:''}
+  <div class="fn-sec">
+    <div class="fn-sec-lbl">実施可能曜日</div>
+    <div class="days-row">${renderDays(days)}</div>
+  </div>
+</div>
 </div>`;
 }
 
-/* =============================================
-MATERIALS SECTIONS（ノード下の素材欄）
-改修更新可な素材は mat-uptag バッジのみ表示し、
-詳細ルートは下のサブフローで表示する。
-============================================= */
+/* 改修更新ノード */
+function buildUpdateNode(tgtNm,updItem,equip){
+  const dayOk=G.day<0||(updItem.youbi&&updItem.youbi[G.day]===1);
+  return `<div class="fnode update"${!dayOk&&G.day>=0?' style="opacity:.5"':''}>
+<div class="fn-hdr">
+  ${mkFnIcon(tgtNm,48,48)}
+  <div class="fn-title">
+    <div class="fn-type">★10 改修更新</div>
+    <div class="fn-name">→ ${esc(tgtNm)}</div>
+  </div>
+</div>
+<div class="fn-body">
+  ${!dayOk&&G.day>=0?`<div class="nomatch">${DAYS[G.day]}曜日は実施不可</div>`:''}
+  <div class="fn-sec">
+    <div class="fn-sec-lbl">実施可能曜日</div>
+    <div class="days-row">${renderDays(updItem.youbi)}</div>
+  </div>
+</div>
+</div>`;
+}
+
+/* 完成装備ノード */
+function buildTargetNode(nm){
+  return `<div class="fnode target">
+<div class="fn-hdr">
+  ${mkFnIcon(nm,48,48)}
+  <div class="fn-title">
+    <div class="fn-type">入手装備</div>
+    <div class="fn-name">${esc(nm)}</div>
+  </div>
+</div>
+<div class="fn-body">
+  <div style="font-size:11px;color:var(--gn2)">改修更新で入手完了</div>
+</div>
+</div>`;
+}
+
+/* ============================================================
+   MATERIALS SECTIONS
+   ============================================================ */
 function buildMatsSection(items,equip,stepCnt,cumRes,cumDev,cumImp){
   const rep=items[0];
   if(!rep)return `<div class="mats-section"><span style="font-size:11px;color:var(--mt)">データなし</span></div>`;
@@ -772,94 +687,158 @@ function buildMatsSection(items,equip,stepCnt,cumRes,cumDev,cumImp){
   let h=`<div class="mats-section">`;
   if(rep.soubi&&rep.soubi.length){
     h+=`<div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--mt);margin-bottom:4px">素材（1回）</div>`;
-    for(const[nm,cnt] of rep.soubi)h+=buildMatEntry(nm,cnt,stepCnt);
+    for(const[nm,cnt] of rep.soubi)h+=buildMatEntry(nm,cnt,stepCnt,0,new Set());
   }
-  h+=`<div style="margin-top:6px">
-<div style="font-size:9px;color:var(--mt);font-weight:700;margin-bottom:4px">資源（1回×${stepCnt}）</div>
-<div class="res-row" style="margin-bottom:6px">
-${res.map((v,i)=>v>0?`<div class="rb ${RCLS[i]}"><div class="rl">${RNAMES[i]}</div><div class="rv">${v}</div><div class="rn">×${stepCnt}=${v*stepCnt}</div></div>`:'').join('')}
-<div class="rb rd"><div class="rl">開発資材</div><div class="rv">${rep.kaihatu[0]}</div><div class="rn">確実:${rep.kaihatu[1]}</div></div>
-<div class="rb ri"><div class="rl">改修資材</div><div class="rv">${rep.kaisyu[0]}</div><div class="rn">確実:${rep.kaisyu[1]}</div></div>
-</div>
-<div style="font-size:9px;color:var(--mt);font-weight:700;margin-bottom:4px">累計（★0→このステップ）</div>
-<div class="res-row">
-${cumRes.map((v,i)=>v>0?`<div class="rb ${RCLS[i]} gld"><div class="rl">${RNAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
-<div class="rb rd gld"><div class="rl">開発</div><div class="rv">${cumDev[0]}</div><div class="rn">確実:${cumDev[1]}</div></div>
-<div class="rb ri gld"><div class="rl">改修</div><div class="rv">${cumImp[0]}</div><div class="rn">確実:${cumImp[1]}</div></div>
-</div>
-</div>`;
+  h+=`<div style="margin-top:5px">
+    <div style="font-size:9px;color:var(--mt);font-weight:700;margin-bottom:3px">資源（1回×${stepCnt}）</div>
+    <div class="res-row" style="margin-bottom:4px">
+      ${res.map((v,i)=>v>0?`<div class="rb ${RCLS[i]}"><div class="rl">${RNAMES[i]}</div><div class="rv">${v}</div><div class="rn">×${stepCnt}=${v*stepCnt}</div></div>`:'').join('')}
+      <div class="rb rd"><div class="rl">開発資材</div><div class="rv">${rep.kaihatu[0]}</div><div class="rn">確実:${rep.kaihatu[1]}</div></div>
+      <div class="rb ri"><div class="rl">改修資材</div><div class="rv">${rep.kaisyu[0]}</div><div class="rn">確実:${rep.kaisyu[1]}</div></div>
+    </div>
+    <div style="font-size:9px;color:var(--mt);font-weight:700;margin-bottom:3px">累計（★0→このステップ）</div>
+    <div class="res-row">
+      ${cumRes.map((v,i)=>v>0?`<div class="rb ${RCLS[i]} gld"><div class="rl">${RNAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
+      <div class="rb rd gld"><div class="rl">開発</div><div class="rv">${cumDev[0]}</div><div class="rn">確実:${cumDev[1]}</div></div>
+      <div class="rb ri gld"><div class="rl">改修</div><div class="rv">${cumImp[0]}</div><div class="rn">確実:${cumImp[1]}</div></div>
+    </div>
+  </div>`;
   h+=`</div>`;
   return h;
 }
 
 function buildUpdateMats(updItem,equip,cumRes,cumDev,cumImp){
-  const fRes=cumRes.map((v,i)=>v+(equip.resource[i]||0));
+  const res=equip.resource;
+  const fRes=cumRes.map((v,i)=>v+(res[i]||0));
   const fDev=[cumDev[0]+updItem.kaihatu[0],cumDev[1]+updItem.kaihatu[1]];
   const fImp=[cumImp[0]+updItem.kaisyu[0],cumImp[1]+updItem.kaisyu[1]];
-  const res=equip.resource;
   let h=`<div class="mats-section">`;
   if(updItem.soubi&&updItem.soubi.length){
     h+=`<div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--mt);margin-bottom:4px">更新素材</div>`;
-    for(const[nm,cnt] of updItem.soubi)h+=buildMatEntry(nm,cnt,1);
+    for(const[nm,cnt] of updItem.soubi)h+=buildMatEntry(nm,cnt,1,0,new Set());
   }
-  h+=`<div style="margin-top:6px">
-<div style="font-size:9px;color:var(--mt);font-weight:700;margin-bottom:4px">更新資材</div>
-<div class="res-row" style="margin-bottom:6px">
-${res.map((v,i)=>v>0?`<div class="rb ${RCLS[i]}"><div class="rl">${RNAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
-<div class="rb rd"><div class="rl">開発資材</div><div class="rv">${updItem.kaihatu[0]}</div><div class="rn">確実:${updItem.kaihatu[1]}</div></div>
-<div class="rb ri"><div class="rl">改修資材</div><div class="rv">${updItem.kaisyu[0]}</div><div class="rn">確実:${updItem.kaisyu[1]}</div></div>
-</div>
-<div style="font-size:9px;color:var(--gd2);font-weight:700;margin-bottom:4px">総合計（全工程）</div>
-<div class="res-row">
-${fRes.map((v,i)=>v>0?`<div class="rb ${RCLS[i]} gld"><div class="rl">${RNAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
-<div class="rb rd gld"><div class="rl">開発</div><div class="rv">${fDev[0]}</div><div class="rn">確実:${fDev[1]}</div></div>
-<div class="rb ri gld"><div class="rl">改修</div><div class="rv">${fImp[0]}</div><div class="rn">確実:${fImp[1]}</div></div>
-</div>
-</div>`;
+  h+=`<div style="margin-top:5px">
+    <div style="font-size:9px;color:var(--mt);font-weight:700;margin-bottom:3px">更新資材</div>
+    <div class="res-row" style="margin-bottom:4px">
+      ${res.map((v,i)=>v>0?`<div class="rb ${RCLS[i]}"><div class="rl">${RNAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
+      <div class="rb rd"><div class="rl">開発資材</div><div class="rv">${updItem.kaihatu[0]}</div><div class="rn">確実:${updItem.kaihatu[1]}</div></div>
+      <div class="rb ri"><div class="rl">改修資材</div><div class="rv">${updItem.kaisyu[0]}</div><div class="rn">確実:${updItem.kaisyu[1]}</div></div>
+    </div>
+    <div style="font-size:9px;color:var(--gd2);font-weight:700;margin-bottom:3px">総合計（全工程）</div>
+    <div class="res-row">
+      ${fRes.map((v,i)=>v>0?`<div class="rb ${RCLS[i]} gld"><div class="rl">${RNAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
+      <div class="rb rd gld"><div class="rl">開発</div><div class="rv">${fDev[0]}</div><div class="rn">確実:${fDev[1]}</div></div>
+      <div class="rb ri gld"><div class="rl">改修</div><div class="rv">${fImp[0]}</div><div class="rn">確実:${fImp[1]}</div></div>
+    </div>
+  </div>`;
   h+=`</div>`;
   return h;
 }
 
-/* =============================================
-buildMatEntry
-  素材チップ表示のみ。
-  改修更新可な場合は「↓ 下で詳細」バッジを付ける。
-  詳細ルートは buildRouteFlow のサブフローとして下に表示。
-============================================= */
-function buildMatEntry(nm,cnt,stepCnt){
+/* ============================================================
+   MATERIAL ENTRY (改修更新可能な素材はチェーン展開)
+   ============================================================ */
+function buildMatEntry(nm,cnt,stepCnt,depth,visited){
   const total=cnt*stepCnt;
-  const canChain=G.targets.has(nm);
-  const imgSrc=eqImg(nm);
-  return `<div class="mat-item">
+  const canChain=!visited.has(nm)&&depth<3&&G.targets.has(nm);
+  let h=`<div class="mat-item">
 <div class="mat-chip">
-<img class="mat-img" src="${imgSrc}" alt="${esc(nm)}" loading="lazy" onerror="this.style.display='none'">
-<span class="mat-name">${esc(nm)}</span>
-<span class="mat-cnt">×${cnt}${stepCnt>1?` (計×${total})`:''}</span>
-${canChain?`<span class="mat-uptag">↓ 改修更新可</span>`:''}
-</div>
+  <img class="mat-img" src="${eqImg(nm)}" alt="${esc(nm)}" loading="lazy" onerror="this.style.display='none'">
+  <span class="mat-name">${esc(nm)}</span>
+  <span class="mat-cnt">×${cnt}${stepCnt>1?` (計×${total})`:''}</span>
+  ${canChain?`<span class="mat-uptag">改修更新可</span>`:''}
 </div>`;
+  if(canChain){
+    const nv=new Set(visited);nv.add(nm);
+    h+=buildMatChain(nm,depth,nv);
+  }
+  h+=`</div>`;
+  return h;
 }
 
-/* =============================================
-SHIPS
-============================================= */
+/* ============================================================
+   MATERIAL CHAIN
+   どの装備をどのように改修更新すれば入手できるかを明示
+   ============================================================ */
+function buildMatChain(nm,depth,visited){
+  if(depth>=3)return `<div class="depth-end">展開上限（3階層）</div>`;
+  const srcs=G.targets.get(nm);
+  if(!srcs||!srcs.length)return '';
+  const dc=['d0','d1','d2'][Math.min(depth,2)];
+  const nv=new Set(visited);nv.add(nm);
+  let h=`<div class="mat-chain ${dc}">
+<div class="mat-chain-ttl">⚡ ${esc(nm)} の改修更新入手ルート</div>`;
+  for(let si=0;si<Math.min(srcs.length,2);si++){
+    const{src:srcNm,cat:srcCat,equip,item:updItem}=srcs[si];
+    const stepKeys=Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
+    h+=`<div class="mat-chain-route">
+<div class="mcr-hdr">
+  <img src="${eqImg(srcNm)}" width="24" height="24" style="object-fit:contain;image-rendering:pixelated;border-radius:3px;background:rgba(0,0,0,.2);flex-shrink:0" onerror="this.style.display='none'" loading="lazy">
+  <span class="mcr-src">${esc(srcNm)}</span>
+  <span class="mcr-cat">[${esc(srcCat)}]</span>
+  ${srcs.length>1?`<span style="font-size:9px;color:var(--mt)">ルート${si+1}/${srcs.length}</span>`:''}
+  <span class="mcr-upd-label">→ ★10で ${esc(nm)} に更新</span>
+</div>
+<div class="mcr-body">`;
+    for(let ki=0;ki<stepKeys.length;ki++){
+      const kn=stepKeys[ki];
+      const nk=ki+1<stepKeys.length?stepKeys[ki+1]:10;
+      const sc=nk-kn;
+      const items=equip.info[String(kn)]||[];
+      const rep=items[0];
+      if(!rep)continue;
+      const slbl=kn===0
+        ?`第${ki+1}段階: ★0 → ★${nk}（${sc}回改修）`
+        :`第${ki+1}段階: ★${kn} → ★${nk}（${sc}回改修）`;
+      h+=`<div class="mcr-step"><div class="mcr-step-lbl">${slbl}</div>`;
+      if(rep.soubi&&rep.soubi.length){
+        for(const[mnm,mcnt] of rep.soubi){
+          if(mnm===srcNm)continue;
+          h+=buildMatEntry(mnm,mcnt,sc,depth+1,nv);
+        }
+      }
+      const res=equip.resource||[0,0,0,0];
+      h+=`<div class="res-row" style="margin-top:3px">
+        ${res.map((v,i)=>v>0?`<div class="rb ${RCLS[i]}"><div class="rl">${RNAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
+        <div class="rb rd"><div class="rl">開発</div><div class="rv">${rep.kaihatu[0]}<span style="font-size:8px;color:var(--dim)">/確${rep.kaihatu[1]}</span></div></div>
+        <div class="rb ri"><div class="rl">改修</div><div class="rv">${rep.kaisyu[0]}<span style="font-size:8px;color:var(--dim)">/確${rep.kaisyu[1]}</span></div></div>
+      </div></div>`;
+    }
+    /* 更新ステップ */
+    h+=`<div class="mcr-step" style="border-left-color:rgba(200,160,40,.4)">
+<div class="mcr-step-lbl" style="color:var(--gd2)">★10 改修更新 → ${esc(nm)} 入手</div>`;
+    if(updItem.soubi&&updItem.soubi.length){
+      for(const[mnm,mcnt] of updItem.soubi)h+=buildMatEntry(mnm,mcnt,1,depth+1,nv);
+    }
+    h+=`<div class="res-row" style="margin-top:3px">
+      <div class="rb rd"><div class="rl">開発</div><div class="rv">${updItem.kaihatu[0]}</div></div>
+      <div class="rb ri"><div class="rl">改修</div><div class="rv">${updItem.kaisyu[0]}</div></div>
+    </div></div>`;
+    h+=`</div></div>`;
+  }
+  if(srcs.length>2)h+=`<div style="font-size:10px;color:var(--mt);margin-top:3px">他 ${srcs.length-2} ルート省略</div>`;
+  h+=`</div>`;
+  return h;
+}
+
+/* ============================================================
+   SHIPS CHIPS
+   ============================================================ */
 function renderShips(shipArr){
   if(!shipArr||!shipArr.length)return '';
-  return shipArr.map(nm=>{
-    return `<div class="ship-chip">
+  return shipArr.map(nm=>`<div class="ship-chip">
 <img class="ship-portrait" src="${shImg(nm)}" alt="${esc(nm)}" loading="lazy" onerror="this.style.display='none'">
 <span class="ship-name">${esc(nm)}</span>
-</div>`;
-  }).join('');
+</div>`).join('');
 }
 
-/* =============================================
-COST CALCULATION
-============================================= */
+/* ============================================================
+   COST CALCULATION
+   ============================================================ */
 function calcCost(equip,tgt){
   const sk=Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
   const res=equip.resource||[0,0,0,0];
-  let tRes=[0,0,0,0],tot={},dMin=0,dMax=0,iMin=0,iMax=0;
+  let tRes=[0,0,0,0],dMin=0,dMax=0,iMin=0,iMax=0;
   for(let ki=0;ki<sk.length;ki++){
     const kn=sk[ki],nk=ki+1<sk.length?sk[ki+1]:10,cnt=nk-kn;
     const items=equip.info[String(kn)]||[];
@@ -869,16 +848,14 @@ function calcCost(equip,tgt){
     if(it){
       dMin+=it.kaihatu[0]*cnt;dMax+=it.kaihatu[1]*cnt;
       iMin+=it.kaisyu[0]*cnt;iMax+=it.kaisyu[1]*cnt;
-      for(const[sn,sc] of(it.soubi||[]))tot[sn]=(tot[sn]||0)+sc*cnt;
     }
   }
   for(const it of(equip.info['10']||[]).filter(x=>x.result===tgt)){
     tRes=tRes.map((v,i)=>v+res[i]);
     dMin+=it.kaihatu[0];dMax+=it.kaihatu[1];
     iMin+=it.kaisyu[0];iMax+=it.kaisyu[1];
-    for(const[sn,sc] of(it.soubi||[]))tot[sn]=(tot[sn]||0)+sc;
   }
-  return{res:tRes,soubiTotals:tot,devMin:dMin,devMax:dMax,impMin:iMin,impMax:iMax};
+  return{res:tRes,devMin:dMin,devMax:dMax,impMin:iMin,impMax:iMax};
 }
 
 function filtTgt(items,tgt,day){
@@ -888,9 +865,9 @@ function filtTgt(items,tgt,day){
   return f;
 }
 
-/* =============================================
-UTILITIES
-============================================= */
+/* ============================================================
+   UTILITIES
+   ============================================================ */
 function renderDays(youbi){
   if(!youbi||youbi.length<7)return '<span style="color:var(--mt)">不明</span>';
   return DAYS.map((d,i)=>{
