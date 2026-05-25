@@ -2,384 +2,510 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>改修更新ツリー</title>
 <style>
-/* ===== 変数 ===== */
+/* =========================================
+   変数・リセット
+   ========================================= */
 :root{
-  --bg:#08111e;--sf:#0d1828;--sf2:#132235;--sf3:#1a2e46;
-  --bd:#1f3654;--bd2:#2d4d70;
-  --tx:#b8d0e4;--mt:#456785;--wh:#d8eeff;
-  --ac:#3a82c6;--gd:#c49230;--gn:#2e8f5a;--rd:#9e4848;--pp:#7058c0;
-  --st:#c8a038;
+  --bg:#050d18; --sf:#0a1625; --sf2:#0f1e30; --sf3:#162840; --sf4:#1d3252;
+  --bd:#1e3a58; --bd2:#2a4e72; --bd3:#3d6a94;
+  --tx:#b0cce0; --mt:#4a6e8a; --wh:#d4eeff; --dim:#3a5570;
+  --ac:#2e7fc4; --ac2:#4a9ad4;
+  --gd:#b89030; --gd2:#d4b050;
+  --gn:#2a7a50; --gn2:#38a866;
+  --rd:#8a3838; --rd2:#c05050;
+  --pp:#5a4898; --pp2:#7a68c0;
+  --st:#c8a030; --st2:#e8c050;
+  --TREE_CONN:#1e3a58;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--tx);font-family:'Noto Sans JP','Yu Gothic UI','Hiragino Sans',sans-serif;font-size:13px;line-height:1.5;overflow:hidden}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--bg);color:var(--tx);
+  font-family:'Noto Sans JP','Yu Gothic UI','Hiragino Sans',sans-serif;
+  font-size:13px;line-height:1.5;
+}
+button{font-family:inherit;cursor:pointer}
+input{font-family:inherit}
 
-/* ===== アプリ骨格 ===== */
+/* =========================================
+   アプリ骨格
+   ========================================= */
 .app{display:flex;flex-direction:column;height:100vh}
-.hdr{
-  background:linear-gradient(to right,#07101d,var(--sf));
-  border-bottom:1px solid var(--bd);padding:0 16px;
-  display:flex;align-items:center;gap:10px;height:44px;flex-shrink:0;
-}
-.hdr-mark{
-  width:26px;height:26px;background:var(--ac);border-radius:4px;
-  color:#fff;font-weight:900;font-size:11px;letter-spacing:-.04em;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.hdr-title{font-size:14px;font-weight:700;color:var(--wh);letter-spacing:.02em}
-.hdr-sep{flex:1}
-.st-dot{width:7px;height:7px;border-radius:50%;background:var(--mt);transition:.3s;flex-shrink:0}
-.st-dot.ok{background:var(--gn)}
-.st-txt{font-size:11px;color:var(--mt)}
 
+/* ----- ヘッダー ----- */
+.hdr{
+  height:46px;flex-shrink:0;
+  background:linear-gradient(90deg,#040c18,#0a1830);
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:10px;padding:0 14px;
+}
+.hdr-badge{
+  width:28px;height:28px;border-radius:4px;
+  background:linear-gradient(135deg,#1a4880,#0e2a50);
+  border:1px solid var(--ac);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:11px;color:var(--ac);letter-spacing:-.04em;flex-shrink:0;
+}
+.hdr-title{font-size:15px;font-weight:700;color:var(--wh);letter-spacing:.03em}
+.hdr-sep{flex:1}
+.st-dot{width:7px;height:7px;border-radius:50%;background:var(--mt);flex-shrink:0;transition:.3s}
+.st-dot.ok{background:var(--gn2)}
+.st-txt{font-size:11px;color:var(--mt)}
+.reload-btn{
+  padding:3px 10px;border-radius:3px;border:1px solid var(--bd);
+  background:transparent;color:var(--mt);font-size:11px;transition:.12s;
+}
+.reload-btn:hover{border-color:var(--ac);color:var(--ac)}
+
+/* ----- ボディ ----- */
 .body-wrap{display:flex;flex:1;overflow:hidden}
 
-/* ===== サイドバー ===== */
+/* =========================================
+   サイドバー
+   ========================================= */
 .sidebar{
-  width:276px;flex-shrink:0;background:var(--sf);
-  border-right:1px solid var(--bd);
+  width:272px;flex-shrink:0;
+  background:var(--sf);border-right:1px solid var(--bd);
   display:flex;flex-direction:column;overflow:hidden;
 }
-.sb-sec{padding:9px 11px;border-bottom:1px solid var(--bd)}
-.sb-lbl{display:block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--mt);margin-bottom:6px}
-.day-btns{display:flex;gap:3px;flex-wrap:wrap}
-.day-btn{
-  padding:3px 7px;border-radius:3px;border:1px solid var(--bd);
-  background:transparent;color:var(--mt);cursor:pointer;font-size:12px;
-  font-family:inherit;transition:.12s;
+.sb-blk{padding:8px 10px;border-bottom:1px solid var(--bd)}
+.sb-lbl{
+  display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;color:var(--mt);margin-bottom:5px;
 }
-.day-btn:hover{border-color:var(--ac);color:var(--ac)}
-.day-btn.active{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}
-.day-btn.active.d0,.day-btn.active.d6{background:#903030;border-color:#903030}
-.srch{
+.day-row{display:flex;gap:3px;flex-wrap:wrap}
+.dbtn{
+  padding:3px 6px;border-radius:3px;border:1px solid var(--bd);
+  background:transparent;color:var(--mt);font-size:12px;transition:.1s;
+}
+.dbtn:hover{border-color:var(--ac);color:var(--ac)}
+.dbtn.act{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}
+.dbtn.act.d0,.dbtn.act.d6{background:#7a2828;border-color:#7a2828}
+.srch-inp{
   width:100%;padding:5px 9px;background:var(--sf2);
-  border:1px solid var(--bd);border-radius:5px;color:var(--tx);
-  font-size:13px;font-family:inherit;outline:none;transition:.12s;
+  border:1px solid var(--bd);border-radius:4px;color:var(--tx);
+  font-size:13px;outline:none;transition:.12s;
 }
-.srch:focus{border-color:var(--ac)}
-.cat-chips{display:flex;gap:3px;flex-wrap:wrap}
-.cat-chip{
+.srch-inp:focus{border-color:var(--ac)}
+.cat-wrap{display:flex;gap:3px;flex-wrap:wrap}
+.cbtn{
   padding:2px 7px;border-radius:10px;border:1px solid var(--bd);
-  background:transparent;color:var(--mt);cursor:pointer;font-size:11px;
-  font-family:inherit;transition:.12s;white-space:nowrap;
+  background:transparent;color:var(--mt);font-size:11px;
+  white-space:nowrap;transition:.1s;
 }
-.cat-chip:hover{border-color:var(--ac);color:var(--ac)}
-.cat-chip.active{background:var(--sf3);border-color:var(--ac);color:var(--ac)}
+.cbtn:hover{border-color:var(--ac);color:var(--ac)}
+.cbtn.act{background:var(--sf3);border-color:var(--ac);color:var(--ac)}
 
-.eq-list{flex:1;overflow-y:auto;padding:4px 0}
-.eq-list::-webkit-scrollbar{width:4px}
-.eq-list::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
-.eq-grp-hdr{
-  padding:3px 10px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;
-  font-weight:700;color:var(--mt);background:var(--sf2);
+/* ----- 装備リスト ----- */
+.eq-scroll{flex:1;overflow-y:auto;padding:3px 0}
+.eq-scroll::-webkit-scrollbar{width:4px}
+.eq-scroll::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.eq-cat-hdr{
+  padding:3px 10px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  font-weight:700;color:var(--mt);background:var(--sf2);position:sticky;top:0;z-index:1;
 }
-.eq-item{
-  padding:5px 9px;cursor:pointer;border-left:3px solid transparent;
-  transition:.1s;display:flex;align-items:center;gap:8px;min-height:54px;
+.eq-row{
+  display:flex;align-items:center;gap:8px;
+  padding:5px 9px;min-height:58px;cursor:pointer;
+  border-left:3px solid transparent;transition:.1s;
 }
-.eq-item:hover{background:var(--sf2);border-left-color:var(--ac)}
-.eq-item.sel{background:rgba(58,130,198,.09);border-left-color:var(--gd)}
-.eq-item.sel .eq-nm{color:var(--gd)}
-.eq-nm{flex:1;line-height:1.35;font-size:12px}
+.eq-row:hover{background:var(--sf2);border-left-color:var(--ac2)}
+.eq-row.sel{background:rgba(46,127,196,.08);border-left-color:var(--gd2)}
+.eq-row.sel .eq-nm{color:var(--gd2)}
+.eq-nm{flex:1;font-size:12px;line-height:1.35;color:var(--tx)}
 .eq-arr{color:var(--mt);font-size:10px;flex-shrink:0}
 
-/* ===== 画像ボックス（フォールバック付き） ===== */
+/* =========================================
+   画像ボックス（フォールバック付き）
+   ========================================= */
 .ib{
   flex-shrink:0;border-radius:5px;overflow:hidden;
   background:var(--sf3);border:1px solid var(--bd);
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;position:relative;
 }
 .ib img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;display:block}
-.ib .ib-fb{display:none;font-size:9px;color:var(--mt);text-align:center;line-height:1.3;padding:2px;word-break:break-all}
+.ib .fb{
+  display:none;font-size:9px;color:var(--mt);text-align:center;
+  line-height:1.3;padding:3px;word-break:break-all;
+  width:100%;height:100%;align-items:center;justify-content:center;
+}
 .ib.miss img{display:none}
-.ib.miss .ib-fb{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.ib.miss .fb{display:flex}
 
-/* ===== コンテンツエリア ===== */
-.content{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+/* =========================================
+   コンテンツエリア
+   ========================================= */
+.content{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:0}
 
-/* ===== 読込・空・ロード ===== */
-.empty{
+/* ----- 空画面 / 読込画面 ----- */
+.empty-wrap,.load-wrap{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  height:100%;color:var(--mt);gap:10px;text-align:center;
-}
-.empty-ico{
-  width:56px;height:56px;border:2px solid var(--bd);border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;font-weight:900;color:var(--bd);
-}
-.load-wrap{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  height:100%;gap:14px;
+  flex:1;gap:12px;color:var(--mt);text-align:center;
 }
 .load-box{
-  background:var(--sf2);border:2px dashed var(--bd);border-radius:12px;
-  padding:36px 52px;text-align:center;cursor:pointer;transition:.2s;max-width:400px;width:100%;
+  background:var(--sf2);border:2px dashed var(--bd2);border-radius:12px;
+  padding:38px 56px;cursor:pointer;transition:.2s;max-width:400px;width:90%;
 }
 .load-box:hover{border-color:var(--ac)}
-.load-ico{font-size:38px;font-weight:900;color:var(--ac);opacity:.4;margin-bottom:14px;letter-spacing:-.04em}
-.load-box h2{font-size:15px;margin-bottom:8px;color:var(--wh)}
+.load-ico{font-size:40px;font-weight:900;color:var(--ac);opacity:.35;margin-bottom:12px;letter-spacing:-.04em}
+.load-box h2{font-size:15px;color:var(--wh);margin-bottom:8px}
 .load-box p{font-size:12px;color:var(--mt);margin-bottom:18px;line-height:1.6}
-.load-btn{
-  padding:8px 22px;background:var(--ac);border:none;border-radius:5px;
-  color:#fff;font-size:13px;font-family:inherit;cursor:pointer;font-weight:700;
+.load-primary-btn{
+  padding:8px 24px;background:var(--ac);border:none;border-radius:5px;
+  color:#fff;font-size:13px;font-weight:700;
 }
-.load-hint{font-size:11px;color:var(--mt);text-align:center}
 
-/* ===== ツリースクロール ===== */
-.tree-scroll{flex:1;overflow-y:auto}
+/* ----- スクロール本体 ----- */
+.tree-scroll{flex:1;overflow-y:auto;overflow-x:hidden}
 .tree-scroll::-webkit-scrollbar{width:6px}
 .tree-scroll::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
 
-/* ===== 目標装備カード ===== */
-.tgt-card{
-  border-bottom:2px solid var(--bd);
-  background:linear-gradient(to right,#0a1c30,var(--sf));
-  padding:16px 20px;display:flex;align-items:flex-start;gap:16px;flex-shrink:0;
+/* =========================================
+   目標装備 ヘッダーカード
+   ========================================= */
+.tgt-hdr{
+  background:linear-gradient(90deg,rgba(4,14,28,.98),rgba(10,24,48,.9));
+  border-bottom:2px solid var(--bd2);
+  padding:14px 18px;display:flex;align-items:flex-start;gap:14px;flex-shrink:0;
 }
-.tgt-card .ib{width:88px;height:88px;border:2px solid var(--gn);background:rgba(0,0,0,.4)}
-.tgt-card .ib .ib-fb{font-size:10px}
-.tgt-badge{font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gn);margin-bottom:4px}
-.tgt-name{font-size:18px;font-weight:700;color:#d8f0d8;line-height:1.3;margin-bottom:8px}
-.tgt-tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.pill{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700}
-.pill-ac{background:rgba(58,130,198,.14);border:1px solid rgba(58,130,198,.3);color:var(--ac)}
-.pill-gd{background:rgba(196,146,48,.12);border:1px solid rgba(196,146,48,.3);color:var(--gd)}
-.pill-gn{background:rgba(46,143,90,.12);border:1px solid rgba(46,143,90,.3);color:var(--gn)}
+.tgt-img-wrap{
+  width:90px;height:90px;flex-shrink:0;border-radius:8px;overflow:hidden;
+  background:rgba(0,0,0,.4);border:2px solid var(--gn);
+  display:flex;align-items:center;justify-content:center;
+}
+.tgt-img-wrap img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.tgt-img-wrap .fb-txt{font-size:10px;color:var(--mt);text-align:center;padding:4px}
+.tgt-meta{flex:1;min-width:0}
+.tgt-eyebrow{
+  font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;color:var(--gn2);margin-bottom:4px;
+}
+.tgt-name{font-size:20px;font-weight:700;color:#c8f0c8;line-height:1.3;margin-bottom:8px}
+.tgt-pills{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.pill{
+  display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;
+  border:1px solid;
+}
+.pill-ac{border-color:rgba(46,127,196,.4);color:var(--ac2);background:rgba(46,127,196,.1)}
+.pill-gd{border-color:rgba(184,144,48,.4);color:var(--gd2);background:rgba(184,144,48,.1)}
+.pill-gn{border-color:rgba(42,122,80,.4);color:var(--gn2);background:rgba(42,122,80,.1)}
 
-/* ===== 統計バー ===== */
+/* =========================================
+   統計バー
+   ========================================= */
 .stats-bar{
-  padding:10px 20px 12px;border-bottom:1px solid var(--bd);
+  padding:10px 18px 12px;border-bottom:1px solid var(--bd);
   background:var(--sf2);flex-shrink:0;
 }
-.stats-bar-lbl{font-size:9px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--mt);margin-bottom:6px}
+.stats-ttl{
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  font-weight:700;color:var(--mt);margin-bottom:7px;
+}
 .stat-cards{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
-.stat-c{background:var(--sf3);border:1px solid var(--bd);border-radius:5px;padding:5px 10px;min-width:100px}
+.stat-c{
+  background:var(--sf3);border:1px solid var(--bd);border-radius:4px;
+  padding:5px 10px;min-width:90px;
+}
 .stat-c-lbl{font-size:9px;color:var(--mt);margin-bottom:2px}
 .stat-c-val{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
-.stat-row{margin-bottom:6px}
-.stat-row-lbl{font-size:9px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--mt);margin-bottom:4px}
-.ship-tag{
-  display:inline-flex;align-items:center;gap:3px;
-  background:rgba(196,146,48,.1);border:1px solid rgba(196,146,48,.24);
-  border-radius:3px;padding:1px 5px 1px 2px;font-size:11px;color:var(--gd);margin:2px;
-}
-.ship-tag img{width:22px;height:22px;object-fit:contain;border-radius:2px;flex-shrink:0}
-.soubi-tags{display:flex;flex-wrap:wrap;gap:4px}
-.soubi-tag{
+.c-fuel{color:#60b8f4} .c-ammo{color:#e8d050} .c-steel{color:#70c870} .c-baux{color:#e09050}
+.c-dev{color:#b080d8} .c-imp{color:#d890b8} .c-gold{color:var(--gd2)}
+.srow-ttl{font-size:9px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--mt);margin-bottom:4px;margin-top:6px}
+.ship-tags{display:flex;flex-wrap:wrap;gap:3px}
+.ship-chip{
   display:inline-flex;align-items:center;gap:4px;
-  background:var(--sf3);border:1px solid var(--bd);
-  border-radius:3px;padding:2px 6px;font-size:12px;
+  background:rgba(184,144,48,.1);border:1px solid rgba(184,144,48,.25);
+  border-radius:3px;padding:2px 6px 2px 2px;font-size:11px;color:var(--gd2);margin:1px;
 }
-.soubi-tag img{width:18px;height:18px;object-fit:contain;image-rendering:pixelated;flex-shrink:0}
-.soubi-tag .sq{color:var(--gd);font-weight:700}
+.ship-chip img{
+  width:48px;height:48px;object-fit:contain;border-radius:3px;flex-shrink:0;
+  image-rendering:pixelated;background:rgba(0,0,0,.25);
+}
+.soubi-total-row{display:flex;flex-wrap:wrap;gap:4px}
+.st-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--sf3);border:1px solid var(--bd);border-radius:3px;padding:2px 6px;font-size:12px;
+}
+.st-chip img{width:20px;height:20px;object-fit:contain;image-rendering:pixelated;flex-shrink:0}
+.st-chip .sq{color:var(--gd2);font-weight:700}
 
-/* ===== ルート/ソースブロック ===== */
-.routes-wrap{padding:14px 20px;display:flex;flex-direction:column;gap:14px}
-.route-block{border:1px solid var(--bd2);border-radius:10px;overflow:hidden}
-.route-hdr{
-  background:linear-gradient(to right,var(--sf2),var(--sf3));
-  border-bottom:1px solid var(--bd);
-  padding:10px 14px;display:flex;align-items:center;gap:12px;
+/* =========================================
+   ルートラッパー
+   ========================================= */
+.routes-wrap{padding:14px 18px;display:flex;flex-direction:column;gap:14px}
+
+/* =========================================
+   ルートブロック
+   ========================================= */
+.route-block{
+  background:var(--sf2);border:1px solid var(--bd2);border-radius:10px;overflow:hidden;
 }
-.route-hdr .ib{width:68px;height:68px;flex-shrink:0;border:1px solid rgba(58,130,198,.3);background:rgba(0,0,0,.35)}
-.route-hdr .ib .ib-fb{font-size:9px}
+.route-hdr{
+  background:linear-gradient(90deg,var(--sf3),rgba(20,44,70,.6));
+  border-bottom:1px solid var(--bd);padding:10px 14px;
+  display:flex;align-items:center;gap:12px;
+}
 .route-info{flex:1;min-width:0}
-.route-cat{font-size:10px;color:var(--mt);margin-bottom:1px}
-.route-name{font-size:15px;font-weight:700;color:var(--ac);margin-bottom:3px}
-.route-desc{font-size:11px;color:var(--mt)}
-.route-res{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;align-items:center}
-.route-badge{
+.route-cat{font-size:9px;color:var(--mt);margin-bottom:2px;letter-spacing:.04em}
+.route-name{font-size:15px;font-weight:700;color:var(--ac2);margin-bottom:3px}
+.route-desc{font-size:11px;color:var(--mt);margin-bottom:4px}
+.res-inline{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ri-item{font-size:11px}
+.ri-lbl{color:var(--mt)}
+.ri-val{color:var(--wh);font-weight:700}
+.route-num-badge{
   margin-left:auto;font-size:10px;color:var(--mt);
   background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:2px 7px;white-space:nowrap;
 }
 
-/* ===== ステップ ===== */
-.steps-wrap{
-  margin-left:10px;padding-left:18px;
-  border-left:2px solid var(--bd);padding-top:8px;padding-bottom:2px;
+/* =========================================
+   ステップツリー（枝型）
+   ========================================= */
+.step-tree{
+  margin-left:14px;padding-left:20px;
+  border-left:2px solid var(--bd2);
+  padding-top:10px;padding-bottom:4px;
 }
-.step-block{margin-bottom:8px;position:relative}
-.step-block::before{
-  content:'';position:absolute;left:-19px;top:16px;
-  width:14px;height:2px;background:var(--bd);
+
+/* ステップノード */
+.step-node{
+  position:relative;margin-bottom:10px;
 }
+/* 横コネクタ（枝 → ノード） */
+.step-node::before{
+  content:'';position:absolute;left:-21px;top:18px;
+  width:18px;height:2px;background:var(--bd2);
+}
+
+/* ステップカードヘッダー */
 .step-card{
-  background:var(--sf2);border:1px solid var(--bd);
-  border-radius:7px;overflow:hidden;transition:.12s;
+  background:var(--sf3);border:1px solid var(--bd);border-radius:7px;overflow:hidden;
 }
-.step-card:hover{border-color:var(--bd2)}
-.step-hdr{
+.step-card-hdr{
   padding:7px 12px;display:flex;align-items:center;gap:8px;
-  cursor:pointer;background:var(--sf3);user-select:none;
+  cursor:pointer;user-select:none;
+  border-bottom:1px solid transparent;transition:.1s;
 }
-.step-hdr.open .step-tog{transform:rotate(90deg)}
+.step-card-hdr:hover{background:var(--sf4)}
+.step-card-hdr.open{border-bottom-color:var(--bd)}
 .star-badge{
-  background:var(--sf);border:1px solid var(--st);border-radius:3px;
-  padding:2px 8px;font-size:11px;color:var(--st);font-weight:700;
-  white-space:nowrap;font-variant-numeric:tabular-nums;
+  background:rgba(0,0,0,.3);border:1px solid var(--st);border-radius:3px;
+  padding:2px 9px;font-size:12px;color:var(--st2);font-weight:700;white-space:nowrap;
 }
-.times-badge{
-  background:rgba(58,130,198,.12);border:1px solid rgba(58,130,198,.25);
-  border-radius:3px;padding:2px 6px;font-size:10px;color:var(--ac);font-weight:700;white-space:nowrap;
+.cnt-badge{
+  background:rgba(46,127,196,.12);border:1px solid rgba(46,127,196,.28);
+  border-radius:3px;padding:2px 6px;font-size:10px;color:var(--ac2);font-weight:700;
 }
-.warn-badge{font-size:10px;color:var(--rd)}
-.step-tog{margin-left:auto;color:var(--mt);font-size:10px;transition:.2s;flex-shrink:0}
-.step-body{padding:10px 12px;display:none;border-top:1px solid var(--bd)}
-.step-body.open{display:block}
+.no-day-badge{font-size:10px;color:var(--rd2)}
+.step-toggle{margin-left:auto;font-size:10px;color:var(--mt);transition:.2s;flex-shrink:0}
+.step-card-hdr.open .step-toggle{transform:rotate(90deg)}
+.step-card-body{display:none;padding:10px 12px}
+.step-card-body.open{display:block}
 
-/* 枝分かれ */
-.branches{}
-.branch-item{padding-left:16px;margin-bottom:5px;position:relative}
-.branch-item::before{content:'';position:absolute;left:0;top:17px;width:12px;height:2px;background:var(--bd)}
-.branch-or{padding:3px 3px 3px 16px;font-size:10px;color:var(--mt)}
-.recipe-card{background:var(--sf);border:1px solid var(--bd);border-radius:5px;padding:8px 10px}
-.recipe-card.dim{opacity:.42}
+/* =========================================
+   レシピ分岐
+   ========================================= */
+.recipe-fork{position:relative}
+.recipe-branch{
+  position:relative;padding-left:18px;margin-bottom:6px;
+}
+.recipe-branch::before{
+  content:'';position:absolute;left:0;top:17px;width:14px;height:2px;background:var(--TREE_CONN);
+}
+.or-divider{
+  padding:3px 3px 3px 18px;font-size:10px;color:var(--mt);
+  letter-spacing:.04em;
+}
+.recipe-card{
+  background:var(--sf);border:1px solid var(--bd);border-radius:6px;padding:9px 11px;
+}
+.recipe-card.dimmed{opacity:.4}
 
-/* 情報行 */
-.irow{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;flex-wrap:wrap}
-.ilbl{font-size:10px;color:var(--mt);min-width:54px;font-weight:700;flex-shrink:0;padding-top:1px}
-.ival{font-size:12px;color:var(--tx)}
+/* =========================================
+   情報行
+   ========================================= */
+.irow{
+  display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;flex-wrap:wrap;
+}
+.ilbl{font-size:10px;color:var(--mt);min-width:52px;font-weight:700;flex-shrink:0;padding-top:2px}
+.ival{font-size:12px;color:var(--tx);flex:1}
 
 /* 曜日ピル */
-.dpill{display:inline-block;border-radius:2px;padding:2px 5px;font-size:10px;margin:1px;font-weight:700}
-.dpill.on{background:rgba(58,130,198,.2);border:1px solid rgba(58,130,198,.4);color:var(--ac)}
-.dpill.off{background:transparent;border:1px solid transparent;color:var(--mt)}
-.dpill.wknd{background:rgba(158,72,72,.15);border-color:rgba(158,72,72,.35);color:#d07070}
+.dpill{
+  display:inline-block;padding:2px 5px;font-size:10px;margin:1px;font-weight:700;
+  border-radius:2px;
+}
+.dpill.on{background:rgba(46,127,196,.18);border:1px solid rgba(46,127,196,.38);color:var(--ac2)}
+.dpill.off{background:transparent;border:1px solid transparent;color:var(--dim)}
+.dpill.wk{background:rgba(140,56,56,.15);border-color:rgba(140,56,56,.35);color:#d07070}
 
 /* 資源ボックス */
-.rg{display:flex;gap:5px;flex-wrap:wrap}
-.rb{text-align:center;background:var(--sf3);border:1px solid var(--bd);border-radius:4px;padding:4px 7px;min-width:54px}
-.rb .rl{font-size:9px;color:var(--mt)}
-.rb .rv{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
-.rb.fuel .rv{color:#5aaef0}.rb.ammo .rv{color:#e8d060}.rb.steel .rv{color:#70c070}
-.rb.bauxite .rv{color:#e08860}.rb.dev .rv{color:#b080d8}.rb.impr .rv{color:#d898b8}
-.rb.gld{border-color:var(--gd)}
-.cum-row{margin-top:6px;padding-top:6px;border-top:1px solid var(--bd)}
-.cum-lbl{font-size:9px;color:var(--mt);font-weight:700;margin-bottom:4px}
+.rg{display:flex;gap:4px;flex-wrap:wrap;align-items:flex-start}
+.rb{
+  background:var(--sf2);border:1px solid var(--bd);border-radius:4px;
+  padding:4px 7px;min-width:64px;text-align:center;
+}
+.rb .rl{font-size:9px;color:var(--mt);margin-bottom:1px}
+.rb .rv{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.rb.gold{border-color:var(--gd)}
+.rb .rn{font-size:9px;color:var(--mt);margin-top:1px}
 
-/* ===== 素材チップ（画像付き・展開ボタン付き） ===== */
-.mat-entry{margin-bottom:4px}
+/* =========================================
+   素材チップ + インライン展開ツリー
+   ========================================= */
+.mat-row{display:flex;flex-direction:column;gap:3px;flex:1}
 .mat-chip{
   display:inline-flex;align-items:center;gap:4px;
-  background:var(--sf2);border:1px solid var(--bd);
-  border-radius:4px;padding:2px 7px 2px 3px;
-  font-size:11px;vertical-align:middle;cursor:default;
+  background:var(--sf2);border:1px solid var(--bd);border-radius:4px;
+  padding:3px 8px 3px 4px;font-size:11px;vertical-align:middle;
 }
-.mat-img{width:24px;height:24px;object-fit:contain;image-rendering:pixelated;flex-shrink:0;background:rgba(0,0,0,.2);border-radius:2px}
-.mat-nm{color:var(--tx)}
-.mat-cnt{color:var(--gd);font-weight:700}
-.mat-xpnd-btn{
-  cursor:pointer;background:rgba(58,130,198,.14);border:1px solid rgba(58,130,198,.3);
-  color:var(--ac);font-size:9px;padding:1px 5px;border-radius:2px;
-  margin-left:3px;font-family:inherit;transition:.1s;white-space:nowrap;
+.mat-img{
+  width:26px;height:26px;object-fit:contain;image-rendering:pixelated;
+  flex-shrink:0;background:rgba(0,0,0,.2);border-radius:3px;
 }
-.mat-xpnd-btn:hover{background:rgba(58,130,198,.28)}
+.mat-name{color:var(--tx)}
+.mat-cnt{color:var(--gd2);font-weight:700}
+.mat-up-tag{
+  font-size:9px;margin-left:4px;padding:1px 4px;
+  background:rgba(46,127,196,.12);border:1px solid rgba(46,127,196,.3);
+  color:var(--ac2);border-radius:2px;letter-spacing:.02em;
+}
 
-/* 素材サブツリー */
-.mat-st{
-  margin:4px 0 0 8px;padding:8px 10px;padding-left:14px;
+/* インライン素材ツリー */
+.mat-tree{
+  margin-left:8px;padding-left:14px;
   border-left:2px solid var(--ac);
-  background:rgba(58,130,198,.04);border-radius:0 5px 5px 0;
-  display:none;
+  padding-top:5px;padding-bottom:3px;
+  background:rgba(46,127,196,.03);
+  border-radius:0 5px 5px 0;
+  margin-top:3px;
 }
-.mat-st.open{display:block}
-.mat-st-title{
-  font-size:10px;color:var(--ac);font-weight:700;margin-bottom:6px;
-  padding:3px 6px;background:rgba(58,130,198,.1);border-radius:3px;display:inline-block;
+.mat-tree.dep1{border-left-color:var(--gd);background:rgba(184,144,48,.03)}
+.mat-tree.dep2{border-left-color:var(--gn);background:rgba(42,122,80,.03)}
+.mat-tree.dep3{border-left-color:var(--pp);background:rgba(90,72,152,.03)}
+.mat-tree-ttl{
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;
+  margin-bottom:6px;display:inline-block;
 }
+.dep0 .mat-tree-ttl{color:var(--ac2);background:rgba(46,127,196,.1)}
+.dep1 .mat-tree-ttl{color:var(--gd2);background:rgba(184,144,48,.1)}
+.dep2 .mat-tree-ttl{color:var(--gn2);background:rgba(42,122,80,.1)}
+.dep3 .mat-tree-ttl{color:var(--pp2);background:rgba(90,72,152,.1)}
 
-/* サブルート */
-.sub-route{background:var(--sf);border:1px solid var(--bd);border-radius:6px;margin-bottom:8px;overflow:hidden}
+.sub-route{
+  background:var(--sf);border:1px solid var(--bd);border-radius:6px;
+  margin-bottom:7px;overflow:hidden;
+}
 .sub-route-hdr{
   background:var(--sf2);padding:6px 10px;border-bottom:1px solid var(--bd);
   display:flex;align-items:center;gap:8px;
 }
-.sub-src-nm{font-size:12px;font-weight:700;color:var(--ac)}
-.sub-src-cat{font-size:10px;color:var(--mt)}
-.sub-body{padding:8px 10px}
-.sub-step{
-  margin-bottom:6px;padding-left:10px;
-  border-left:2px solid var(--bd);
-  padding-top:2px;padding-bottom:2px;
+.sub-route-hdr img{
+  width:34px;height:34px;object-fit:contain;image-rendering:pixelated;
+  border-radius:3px;background:rgba(0,0,0,.3);flex-shrink:0;
 }
-.sub-step-lbl{font-size:10px;color:var(--st);font-weight:700;margin-bottom:3px}
+.sub-src-nm{font-size:12px;font-weight:700;color:var(--ac2)}
+.sub-src-cat{font-size:10px;color:var(--mt)}
+.sub-body{padding:7px 10px}
+.sub-step{
+  margin-bottom:5px;padding-left:10px;
+  border-left:2px solid var(--bd);padding-top:2px;
+}
+.sub-step-lbl{font-size:10px;color:var(--st2);font-weight:700;margin-bottom:3px}
+.depth-lim{font-size:10px;color:var(--mt);font-style:italic;padding:4px 8px}
+.no-data{
+  padding:4px 9px;background:rgba(80,30,30,.25);
+  border:1px solid rgba(140,56,56,.3);border-radius:3px;font-size:11px;color:#b07070;
+}
 
-/* 深さ別カラー */
-.dep1.mat-st{border-left-color:var(--gd)}
-.dep1 .mat-st-title{color:var(--gd);background:rgba(196,146,48,.1)}
-.dep2.mat-st{border-left-color:var(--gn)}
-.dep2 .mat-st-title{color:var(--gn);background:rgba(46,143,90,.1)}
-.dep3.mat-st{border-left-color:var(--pp)}
-.dep3 .mat-st-title{color:var(--pp);background:rgba(112,88,192,.1)}
+/* =========================================
+   累計行
+   ========================================= */
+.cum-blk{margin-top:6px;padding-top:6px;border-top:1px solid var(--bd)}
+.cum-lbl{font-size:9px;color:var(--mt);font-weight:700;margin-bottom:4px;letter-spacing:.04em}
 
-/* ===== 改修更新ブロック ===== */
-.update-block{
-  margin:8px 14px 12px;
-  background:linear-gradient(to right,rgba(196,146,48,.08),rgba(196,146,48,.03));
-  border:2px solid rgba(196,146,48,.4);border-radius:8px;padding:10px 14px;
+/* =========================================
+   改修更新ブロック
+   ========================================= */
+.update-node{
+  position:relative;margin:4px 0 6px;
+}
+.update-node::before{
+  content:'';position:absolute;left:-21px;top:18px;width:18px;height:2px;background:var(--gd);
+}
+.update-card{
+  background:linear-gradient(90deg,rgba(28,20,8,.7),rgba(20,16,6,.5));
+  border:2px solid rgba(184,144,48,.45);border-radius:8px;padding:10px 14px;
 }
 .uc-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
 .uc-star{
-  font-size:12px;font-weight:700;color:var(--gd);
-  background:rgba(196,146,48,.14);border:1px solid rgba(196,146,48,.4);
+  font-size:12px;font-weight:700;color:var(--gd2);
+  background:rgba(184,144,48,.14);border:1px solid rgba(184,144,48,.4);
   border-radius:3px;padding:2px 8px;
 }
-.uc-arrow{color:var(--gd);font-weight:900;font-size:14px}
-.uc-result{display:flex;align-items:center;gap:8px}
-.uc-result-img{width:34px;height:34px;object-fit:contain;image-rendering:pixelated;border-radius:3px;background:rgba(0,0,0,.3)}
-.uc-result-nm{font-size:13px;font-weight:700;color:var(--gn)}
-.uc-warn{font-size:10px;color:var(--rd)}
+.uc-arrow{color:var(--gd2);font-weight:900;font-size:15px}
+.uc-res{display:flex;align-items:center;gap:8px}
+.uc-res-img{
+  width:38px;height:38px;object-fit:contain;image-rendering:pixelated;
+  border-radius:4px;background:rgba(0,0,0,.3);border:1px solid rgba(184,144,48,.3);
+}
+.uc-res-nm{font-size:14px;font-weight:700;color:var(--gn2)}
+.uc-warn{font-size:10px;color:var(--rd2)}
 
-/* ===== 素材合計カード ===== */
+/* 素材合計カード */
 .totals-card{
   margin:4px 14px 14px;background:var(--sf2);
   border:1px solid var(--bd);border-radius:7px;padding:10px 14px;
 }
-.totals-title{
+.totals-ttl{
   font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
-  color:var(--mt);margin-bottom:8px;
+  color:var(--mt);margin-bottom:8px;display:flex;align-items:center;gap:8px;
 }
+.totals-ttl::after{content:'';flex:1;height:1px;background:var(--bd)}
 .totals-grid{display:flex;flex-wrap:wrap;gap:5px}
-.total-item{
-  display:flex;align-items:center;gap:4px;
-  background:var(--sf3);border:1px solid var(--bd);border-radius:4px;padding:3px 8px;font-size:12px;
+.total-chip{
+  display:flex;align-items:center;gap:5px;
+  background:var(--sf3);border:1px solid var(--bd);border-radius:4px;padding:4px 9px;font-size:12px;
 }
-.total-item img{width:22px;height:22px;object-fit:contain;image-rendering:pixelated;flex-shrink:0}
-.total-cnt{color:var(--gd);font-weight:700}
-
-/* ===== 一致なし ===== */
-.nomatch{
-  padding:5px 10px;background:rgba(80,30,30,.3);
-  border:1px solid rgba(158,72,72,.3);border-radius:3px;font-size:11px;color:#c08080;
-}
-
-/* ===== 深さ制限 ===== */
-.depth-limit{font-size:10px;color:var(--mt);padding:4px 8px;font-style:italic}
+.total-chip img{width:24px;height:24px;object-fit:contain;image-rendering:pixelated;flex-shrink:0}
+.total-cnt{color:var(--gd2);font-weight:700}
+.up-mark{font-size:9px;color:var(--ac2);margin-left:3px}
 </style>
 </head>
 <body>
-<div class="app" id="app">
+<div class="app">
+  <!-- ヘッダー -->
   <header class="hdr">
     <div class="st-dot" id="stDot"></div>
-    <div class="hdr-mark">改</div>
+    <div class="hdr-badge">改</div>
     <span class="hdr-title">改修更新ツリー</span>
     <span class="hdr-sep"></span>
-    <span class="st-txt" id="stTxt">kaisyu.json を読み込んでいます...</span>
-    <button class="day-btn" id="reloadBtn" style="display:none;margin-left:8px" onclick="showLoadUI()">再読込</button>
+    <span class="st-txt" id="stTxt">kaisyu.json を読み込み中...</span>
+    <button class="reload-btn" id="reloadBtn" style="display:none" onclick="showLoadUI()">再読込</button>
   </header>
+
+  <!-- ボディ -->
   <div class="body-wrap" id="mainBody">
+    <!-- 読込UI -->
     <div class="load-wrap" id="loadScreen">
-      <div class="load-box" onclick="document.getElementById('fileInput').click()"
-           ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+      <div class="load-box"
+           onclick="document.getElementById('fileInput').click()"
+           ondragover="event.preventDefault()"
+           ondrop="handleDrop(event)">
         <div class="load-ico">JSON</div>
         <h2>kaisyu.json を読み込む</h2>
         <p>ここをクリックしてファイルを選択するか、<br>ドラッグ＆ドロップしてください</p>
-        <button class="load-btn" onclick="event.stopPropagation();document.getElementById('fileInput').click()">ファイルを選択</button>
-        <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFile(this.files[0])">
+        <button class="load-primary-btn"
+                onclick="event.stopPropagation();document.getElementById('fileInput').click()">
+          ファイルを選択
+        </button>
+        <input type="file" id="fileInput" accept=".json"
+               style="display:none" onchange="handleFile(this.files[0])">
       </div>
-      <p class="load-hint">同ディレクトリに kaisyu.json がある場合は自動読み込みされます</p>
+      <p style="font-size:11px;color:var(--mt)">同ディレクトリに kaisyu.json がある場合は自動読み込みされます</p>
     </div>
   </div>
 </div>
@@ -389,54 +515,65 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans JP','Yu Gothic 
    グローバル状態
    ===================================================== */
 const G = {
-  data: null, lookup: {}, targets: new Map(), targetList: [],
-  selected: null, dayFilter: -1, searchText: '', catFilter: '',
+  data:null, lookup:{}, targets:new Map(), targetList:[],
+  selected:null, dayFilter:-1, searchText:'', catFilter:'',
 };
 
 const DAYS      = ['日','月','火','水','木','金','土'];
 const RES_NAMES = ['燃料','弾薬','鋼材','ボーキ'];
 const RES_KEYS  = ['fuel','ammo','steel','bauxite'];
-
-/* 素材サブツリー用グローバルキャッシュ */
-let _mtCnt = 0;
-const _mtCache = {};
+const RES_COLS  = ['c-fuel','c-ammo','c-steel','c-baux'];
 
 /* =====================================================
    画像ヘルパー
    ===================================================== */
-/* equipImgSrc:
-   - 全角 + → 半角 +
-   - 全角 / → ^
-   - 砲[A-F] → chr(0x7832X)  ← Zip エンコーディングバグ対応
-     例: 砲A (U+7832 + U+41) → zipが #U7832A と誤解釈 → U+7832A */
-function equipImgSrc(name) {
+/* 名前 → 画像パス
+   - 全角プラス / スラッシュ を正規化
+   - 砲[A-F] → chr(0x78320 + 16進数値)
+     例: 砲A = U+7832A（Zipエンコーディングの差異対応） */
+function equipImg(name) {
   return 'image/item/' + name
-    .replace(/＋/g, '+')
-    .replace(/[／\/]/g, '^')
-    .replace(/砲([A-Fa-f])/g, function(_,c){ return String.fromCodePoint(0x78320 + parseInt(c,16)); })
+    .replace(/＋/g,'+')
+    .replace(/[／\/]/g,'^')
+    .replace(/砲([A-Fa-f])/g, (_,c) => String.fromCodePoint(0x78320+parseInt(c,16)))
     + '.png';
 }
-function shipImgSrc(name){ return 'image/ship/' + name + '.png'; }
+function shipImg(name){ return 'image/ship/'+name+'.png'; }
 
-/* 画像ボックス（フォールバック付き）: onerror で .miss クラスを追加して代替テキスト表示 */
-function mkIb(name, size, borderColor) {
-  const src = equipImgSrc(name);
-  const fb = esc(name.slice(0,6));
-  const style = borderColor ? ` style="border-color:${borderColor}"` : '';
-  return `<div class="ib" style="width:${size}px;height:${size}px"${style}>
+/* 装備画像ボックスHTML */
+function mkIb(name, w, h, extraStyle) {
+  const src = equipImg(name);
+  const fb  = esc(name.slice(0,6));
+  const st  = extraStyle ? ` style="${extraStyle}"` : '';
+  return `<div class="ib" style="width:${w}px;height:${h}px"${st}>
     <img src="${src}" alt="${esc(name)}" loading="lazy"
-      onerror="this.parentNode.classList.add('miss')">
-    <div class="ib-fb">${fb}</div>
+         onerror="this.parentNode.classList.add('miss')">
+    <div class="fb">${fb}</div>
   </div>`;
 }
 
-/* 艦船タグ */
-function shipTag(name) {
-  const src = shipImgSrc(name);
-  return `<span class="ship-tag">
-    <img src="${src}" onerror="this.style.display='none'" loading="lazy" alt="${esc(name)}">
+/* 艦娘タグ（大きな画像） */
+function shipChip(name) {
+  const src = shipImg(name);
+  return `<span class="ship-chip">
+    <img src="${src}" alt="${esc(name)}" loading="lazy"
+         onerror="this.style.display='none'">
     ${esc(name)}
   </span>`;
+}
+
+/* 資源・資材ボックス
+   notesに「通常 / 確実化」を表示 */
+function resBx(label, valMin, valMax, colorCls, isGold) {
+  const gold = isGold ? ' gold' : '';
+  const nota = (valMin !== valMax)
+    ? `<div class="rn">通常:${valMin} / 確実:${valMax}</div>`
+    : `<div class="rn">通常/確実:${valMin}</div>`;
+  return `<div class="rb${gold}">
+    <div class="rl">${esc(label)}</div>
+    <div class="rv ${colorCls}">${valMin}</div>
+    ${nota}
+  </div>`;
 }
 
 /* =====================================================
@@ -446,687 +583,656 @@ window.addEventListener('DOMContentLoaded', async () => {
   try {
     const r = await fetch('./kaisyu.json');
     if (r.ok) { initData(await r.json()); return; }
-  } catch(_) {}
+  } catch(_){}
   showLoadUI();
 });
 
-function showLoadUI() {
-  const mb = document.getElementById('mainBody');
-  const ls = document.getElementById('loadScreen');
-  if (!mb.contains(ls)) { mb.innerHTML = ''; mb.appendChild(ls); }
-  ls.style.display = '';
-  document.getElementById('reloadBtn').style.display = 'block';
-  setStatus('待機中', false);
+function showLoadUI(){
+  const mb=document.getElementById('mainBody');
+  const ls=document.getElementById('loadScreen');
+  if(!mb.contains(ls)){mb.innerHTML='';mb.appendChild(ls);}
+  ls.style.display='';
+  document.getElementById('reloadBtn').style.display='block';
+  setSt('待機中',false);
 }
 
-function handleFile(file) {
-  if (!file) return;
-  setStatus('読み込み中...', false);
-  const r = new FileReader();
-  r.onload = e => {
-    try { initData(JSON.parse(e.target.result)); }
-    catch(err) { setStatus('JSON の解析に失敗しました', false); }
+function handleFile(file){
+  if(!file) return;
+  setSt('読み込み中...',false);
+  const r=new FileReader();
+  r.onload=e=>{
+    try{initData(JSON.parse(e.target.result));}
+    catch(err){setSt('JSON の解析に失敗しました',false);}
   };
-  r.readAsText(file, 'UTF-8');
+  r.readAsText(file,'UTF-8');
 }
 
-function handleDrop(e) {
+function handleDrop(e){
   e.preventDefault();
-  const f = e.dataTransfer.files[0];
-  if (f) handleFile(f);
+  const f=e.dataTransfer.files[0];
+  if(f) handleFile(f);
 }
 
-function setStatus(txt, ok) {
-  document.getElementById('stTxt').textContent = txt;
-  document.getElementById('stDot').className = 'st-dot' + (ok ? ' ok' : '');
+function setSt(txt,ok){
+  document.getElementById('stTxt').textContent=txt;
+  document.getElementById('stDot').className='st-dot'+(ok?' ok':'');
 }
 
-function initData(json) {
-  G.data = json; G.lookup = {}; G.targets = new Map();
-
-  for (const [cat, equips] of Object.entries(json))
-    for (const [name, equip] of Object.entries(equips))
-      G.lookup[name] = { category: cat, equip };
-
-  for (const [cat, equips] of Object.entries(json))
-    for (const [name, equip] of Object.entries(equips))
-      for (const item of (equip.info['10'] || []))
-        if (item.result) {
-          if (!G.targets.has(item.result)) G.targets.set(item.result, []);
-          G.targets.get(item.result).push({ sourceName: name, sourceCategory: cat, equip, item });
+function initData(json){
+  G.data=json; G.lookup={}; G.targets=new Map();
+  for(const[cat,equips] of Object.entries(json))
+    for(const[nm,eq] of Object.entries(equips))
+      G.lookup[nm]={category:cat,equip:eq};
+  for(const[cat,equips] of Object.entries(json))
+    for(const[nm,eq] of Object.entries(equips))
+      for(const it of (eq.info['10']||[]))
+        if(it.result){
+          if(!G.targets.has(it.result)) G.targets.set(it.result,[]);
+          G.targets.get(it.result).push({sourceName:nm,sourceCategory:cat,equip:eq,item:it});
         }
-
-  G.targetList = Array.from(G.targets.keys()).sort();
-  setStatus(`${G.targetList.length} 件の改修更新装備を読み込みました`, true);
-  document.getElementById('reloadBtn').style.display = 'block';
-  buildMainUI();
+  G.targetList=Array.from(G.targets.keys()).sort();
+  setSt(`${G.targetList.length} 件の改修更新装備を読み込みました`,true);
+  document.getElementById('reloadBtn').style.display='block';
+  buildUI();
 }
 
 /* =====================================================
    メイン UI 構築
    ===================================================== */
-function buildMainUI() {
-  const mb = document.getElementById('mainBody');
-  mb.innerHTML = `
-    <aside class="sidebar" id="sidebar">
-      <div class="sb-sec">
-        <span class="sb-lbl">曜日フィルター</span>
-        <div class="day-btns">
-          <button class="day-btn active" data-day="-1" onclick="setDay(-1)">全</button>
-          ${DAYS.map((d,i)=>`<button class="day-btn d${i}" data-day="${i}" onclick="setDay(${i})">${d}</button>`).join('')}
-        </div>
+function buildUI(){
+  const mb=document.getElementById('mainBody');
+  mb.innerHTML=`
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-blk">
+      <span class="sb-lbl">曜日フィルター</span>
+      <div class="day-row">
+        <button class="dbtn act" data-d="-1" onclick="setDay(-1)">全</button>
+        ${DAYS.map((d,i)=>`<button class="dbtn d${i}" data-d="${i}" onclick="setDay(${i})">${d}</button>`).join('')}
       </div>
-      <div class="sb-sec">
-        <span class="sb-lbl">カテゴリ</span>
-        <div class="cat-chips" id="catChips">
-          <button class="cat-chip active" data-cat="" onclick="setCat('')">全て</button>
-        </div>
+    </div>
+    <div class="sb-blk">
+      <span class="sb-lbl">カテゴリ</span>
+      <div class="cat-wrap" id="catWrap">
+        <button class="cbtn act" data-c="" onclick="setCat('')">全て</button>
       </div>
-      <div class="sb-sec">
-        <span class="sb-lbl">装備名検索</span>
-        <input class="srch" type="text" placeholder="装備名を入力..." oninput="setSearch(this.value)">
-      </div>
-      <div class="eq-list" id="eqList"></div>
-    </aside>
-    <main class="content" id="content">
-      <div class="empty">
-        <div class="empty-ico">?</div>
-        <div>左のリストから目標装備を選択してください</div>
-        <div style="font-size:11px;color:var(--mt)">改修更新で入手できる装備の製作手順が表示されます</div>
-      </div>
-    </main>`;
+    </div>
+    <div class="sb-blk">
+      <span class="sb-lbl">装備名検索</span>
+      <input class="srch-inp" type="text" placeholder="装備名を入力..." oninput="setSearch(this.value)">
+    </div>
+    <div class="eq-scroll" id="eqScroll"></div>
+  </aside>
+  <main class="content" id="content">
+    <div class="empty-wrap">
+      <div style="font-size:30px;color:var(--bd2);font-weight:900">---</div>
+      <div>左のリストから目標装備を選択してください</div>
+      <div style="font-size:11px;color:var(--mt)">改修更新ツリーが展開されます</div>
+    </div>
+  </main>`;
   buildCatChips();
   renderEqList();
 }
 
-function buildCatChips() {
-  const cats = new Set();
-  for (const [,srcs] of G.targets) for (const s of srcs) cats.add(s.sourceCategory);
-  const cont = document.getElementById('catChips');
-  Array.from(cats).sort().forEach(cat => {
-    const b = document.createElement('button');
-    b.className = 'cat-chip'; b.dataset.cat = cat;
-    b.textContent = cat.replace(/[主副]砲/,'砲').replace('艦上','').replace('水上','') || cat.slice(0,4);
-    b.title = cat; b.onclick = () => setCat(cat);
-    cont.appendChild(b);
+function buildCatChips(){
+  const cats=new Set();
+  for(const[,srcs] of G.targets) for(const s of srcs) cats.add(s.sourceCategory);
+  const cw=document.getElementById('catWrap');
+  Array.from(cats).sort().forEach(cat=>{
+    const b=document.createElement('button');
+    b.className='cbtn'; b.dataset.c=cat;
+    b.textContent=cat.replace(/[主副]砲/,'砲').replace('艦上','').replace('水上','') || cat.slice(0,4);
+    b.title=cat; b.onclick=()=>setCat(cat);
+    cw.appendChild(b);
   });
 }
 
 /* ===== フィルター ===== */
-function setDay(d) {
-  G.dayFilter = d;
-  document.querySelectorAll('.day-btn').forEach(b => b.classList.toggle('active', +b.dataset.day===d));
-  if (G.selected) renderTree(G.selected);
+function setDay(d){
+  G.dayFilter=d;
+  document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('act',+b.dataset.d===d));
+  if(G.selected) renderTree(G.selected);
   renderEqList();
 }
-function setCat(cat) {
-  G.catFilter = cat;
-  document.querySelectorAll('.cat-chip').forEach(b => b.classList.toggle('active', b.dataset.cat===cat));
+function setCat(c){
+  G.catFilter=c;
+  document.querySelectorAll('.cbtn').forEach(b=>b.classList.toggle('act',b.dataset.c===c));
   renderEqList();
 }
-function setSearch(txt) { G.searchText = txt.trim(); renderEqList(); }
+function setSearch(t){ G.searchText=t.trim(); renderEqList(); }
 
 /* =====================================================
-   サイドバー 装備リスト描画
+   サイドバー リスト描画
    ===================================================== */
-function renderEqList() {
-  const cont = document.getElementById('eqList');
-  if (!cont) return;
-  const { searchText, dayFilter, catFilter } = G;
-  const grouped = {};
-
-  for (const tgt of G.targetList) {
-    const srcs = G.targets.get(tgt);
-    if (!srcs) continue;
-    const cats = srcs.map(s => s.sourceCategory);
-    if (catFilter && !cats.includes(catFilter)) continue;
-    if (searchText && !tgt.includes(searchText)) continue;
-    if (dayFilter >= 0 && !srcs.some(s => s.item.youbi && s.item.youbi[dayFilter]===1)) continue;
-    const dcat = catFilter || cats[0] || 'その他';
-    if (!grouped[dcat]) grouped[dcat] = [];
-    grouped[dcat].push(tgt);
+function renderEqList(){
+  const cont=document.getElementById('eqScroll');
+  if(!cont) return;
+  const {searchText,dayFilter,catFilter}=G;
+  const grp={};
+  for(const tgt of G.targetList){
+    const srcs=G.targets.get(tgt);
+    if(!srcs) continue;
+    const cats=srcs.map(s=>s.sourceCategory);
+    if(catFilter && !cats.includes(catFilter)) continue;
+    if(searchText && !tgt.includes(searchText)) continue;
+    if(dayFilter>=0 && !srcs.some(s=>s.item.youbi&&s.item.youbi[dayFilter]===1)) continue;
+    const dcat=catFilter||cats[0]||'その他';
+    if(!grp[dcat]) grp[dcat]=[];
+    grp[dcat].push(tgt);
   }
-
-  let html = '';
-  for (const [cat, items] of Object.entries(grouped).sort()) {
-    html += `<div class="eq-grp-hdr">${esc(cat)}</div>`;
-    for (const tgt of items) {
-      const imgSrc = equipImgSrc(tgt);
-      const sel = G.selected === tgt;
-      html += `<div class="eq-item${sel?' sel':''}" onclick="selectTarget('${esc(tgt)}')">
-        <div class="ib" style="width:48px;height:48px">
-          <img src="${imgSrc}" alt="${esc(tgt)}" loading="lazy"
-            onerror="this.parentNode.classList.add('miss')">
-          <div class="ib-fb">${esc(tgt.slice(0,5))}</div>
-        </div>
+  let h='';
+  for(const[cat,items] of Object.entries(grp).sort()){
+    h+=`<div class="eq-cat-hdr">${esc(cat)}</div>`;
+    for(const tgt of items){
+      const sel=G.selected===tgt;
+      h+=`<div class="eq-row${sel?' sel':''}" onclick="selectTarget('${esc(tgt)}')">
+        ${mkIb(tgt,50,50)}
         <span class="eq-nm">${esc(tgt)}</span>
         <span class="eq-arr">›</span>
       </div>`;
     }
   }
-  if (!html) html = `<div style="padding:16px;color:var(--mt);text-align:center;font-size:12px">該当する装備がありません</div>`;
-  cont.innerHTML = html;
+  if(!h) h=`<div style="padding:16px;color:var(--mt);text-align:center;font-size:12px">該当なし</div>`;
+  cont.innerHTML=h;
 }
 
-function selectTarget(name) {
-  G.selected = name;
+function selectTarget(name){
+  G.selected=name;
   renderEqList();
   renderTree(name);
 }
 
 /* =====================================================
-   メインツリー描画
+   ツリー描画
    ===================================================== */
-function renderTree(targetName) {
-  const content = document.getElementById('content');
-  if (!content) return;
-
-  /* 素材サブツリーキャッシュをリセット */
-  _mtCnt = 0;
-  Object.keys(_mtCache).forEach(k => delete _mtCache[k]);
-
-  const sources = G.targets.get(targetName);
-  if (!sources || !sources.length) {
-    content.innerHTML = `<div class="empty"><div>データが見つかりません</div></div>`;
+function renderTree(tgtName){
+  const cont=document.getElementById('content');
+  if(!cont) return;
+  const srcs=G.targets.get(tgtName);
+  if(!srcs||!srcs.length){
+    cont.innerHTML=`<div class="empty-wrap"><div>データが見つかりません</div></div>`;
     return;
   }
 
-  const primSrc = sources[0];
-  const stats   = calcTotalCost(primSrc.equip, targetName);
-  const allShips = collectAllShips(primSrc.equip, targetName);
+  const pSrc  = srcs[0];
+  const stats = calcCost(pSrc.equip, tgtName);
+  const ships = collectShips(pSrc.equip, tgtName);
 
-  let html = '';
-
-  /* --- 目標装備カード --- */
-  html += `<div class="tgt-card">
-    ${mkIb(targetName, 88, 'var(--gn)')}
-    <div style="flex:1;min-width:0">
-      <div class="tgt-badge">目標装備</div>
-      <div class="tgt-name">${esc(targetName)}</div>
-      <div class="tgt-tags">
+  /* --- 目標ヘッダー --- */
+  const tgtImgSrc = equipImg(tgtName);
+  let h=`<div class="tgt-hdr">
+    <div class="tgt-img-wrap">
+      <img src="${tgtImgSrc}" alt="${esc(tgtName)}" loading="lazy"
+           onerror="this.style.display='none'">
+      <div class="fb-txt" style="display:${tgtName?'block':'none'}">${esc(tgtName.slice(0,6))}</div>
+    </div>
+    <div class="tgt-meta">
+      <div class="tgt-eyebrow">目標装備</div>
+      <div class="tgt-name">${esc(tgtName)}</div>
+      <div class="tgt-pills">
         <span class="pill pill-ac">改修更新で入手</span>
-        <span class="pill pill-gd">${esc(primSrc.sourceCategory)}</span>
-        ${sources.length > 1 ? `<span class="pill pill-gn">入手ルート ${sources.length} 種</span>` : ''}
+        <span class="pill pill-gd">${esc(pSrc.sourceCategory)}</span>
+        ${srcs.length>1?`<span class="pill pill-gn">入手ルート ${srcs.length} 種</span>`:''}
       </div>
     </div>
   </div>`;
 
   /* --- 統計バー --- */
-  html += `<div class="stats-bar">
-    <div class="stats-bar-lbl">総コスト概算（代表ルート: ${esc(primSrc.sourceName)}）</div>
+  h+=`<div class="stats-bar">
+    <div class="stats-ttl">総コスト概算（代表ルート: ${esc(pSrc.sourceName)}）</div>
     <div class="stat-cards">
       ${stats.res.map((v,i)=>v>0?`<div class="stat-c">
         <div class="stat-c-lbl">${RES_NAMES[i]}</div>
-        <div class="stat-c-val" style="color:var(--${RES_KEYS[i]})">${v.toLocaleString()}</div>
+        <div class="stat-c-val ${RES_COLS[i]}">${v.toLocaleString()}</div>
       </div>`:'').join('')}
       <div class="stat-c">
-        <div class="stat-c-lbl">開発資材</div>
-        <div class="stat-c-val" style="color:#b080d8">${stats.devMin}〜${stats.devMax}</div>
+        <div class="stat-c-lbl">開発資材 通常/確実</div>
+        <div class="stat-c-val c-dev">${stats.devMin} / ${stats.devMax}</div>
       </div>
       <div class="stat-c">
-        <div class="stat-c-lbl">改修資材</div>
-        <div class="stat-c-val" style="color:#d898b8">${stats.impMin}〜${stats.impMax}</div>
+        <div class="stat-c-lbl">改修資材 通常/確実</div>
+        <div class="stat-c-val c-imp">${stats.impMin} / ${stats.impMax}</div>
       </div>
-    </div>
-    ${allShips.length ? `<div class="stat-row">
-      <div class="stat-row-lbl">必要艦艇（代表ルート）</div>
-      <div class="ship-tags">${allShips.map(s=>shipTag(s)).join('')}</div>
-    </div>` : ''}
-    <div class="stat-row-lbl" style="margin-top:6px;margin-bottom:4px">素材総計（★0 → 改修更新完了）</div>
-    <div class="soubi-tags">
-      ${Object.entries(stats.soubiTotals).map(([nm,cnt])=>`<span class="soubi-tag">
-        <img src="${equipImgSrc(nm)}" onerror="this.style.display='none'" loading="lazy" alt="${esc(nm)}">
+    </div>`;
+  if(ships.length){
+    h+=`<div class="srow-ttl">必要艦艇（代表ルート）</div>
+    <div class="ship-tags">${ships.map(s=>shipChip(s)).join('')}</div>`;
+  }
+  if(Object.keys(stats.soubiTotals).length){
+    h+=`<div class="srow-ttl" style="margin-top:8px">素材総計（★0 → 改修更新完了）</div>
+    <div class="soubi-total-row">
+      ${Object.entries(stats.soubiTotals).map(([nm,cnt])=>`<span class="st-chip">
+        <img src="${equipImg(nm)}" onerror="this.style.display='none'" loading="lazy" alt="${esc(nm)}">
         <span class="sq">x${cnt}</span>${esc(nm)}
-      </span>`).join('') || '<span style="color:var(--mt);font-size:11px">なし</span>'}
-    </div>
-  </div>`;
+      </span>`).join('')}
+    </div>`;
+  }
+  h+=`</div>`;
 
   /* --- ルートブロック群 --- */
-  html += `<div class="tree-scroll"><div class="routes-wrap">`;
-  for (let si = 0; si < sources.length; si++) {
-    const { sourceName, sourceCategory, equip, item: updateItem } = sources[si];
-    html += renderRouteBlock(sourceName, sourceCategory, equip, targetName, updateItem, si, sources.length);
+  h+=`<div class="tree-scroll"><div class="routes-wrap">`;
+  for(let si=0;si<srcs.length;si++){
+    const{sourceName,sourceCategory,equip,item:updItem}=srcs[si];
+    h+=buildRouteBlock(sourceName,sourceCategory,equip,tgtName,updItem,si,srcs.length);
   }
-  html += `</div></div>`;
+  h+=`</div></div>`;
 
-  content.innerHTML = html;
+  cont.innerHTML=h;
 }
 
 /* =====================================================
-   ルートブロック（1ルート分）
+   ルートブロック
    ===================================================== */
-function renderRouteBlock(srcName, srcCat, equip, tgtName, updateItem, idx, total) {
-  const stepKeys = Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
+function buildRouteBlock(srcNm,srcCat,equip,tgtNm,updItem,idx,total){
+  const stepKeys=Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
 
-  /* ルートヘッダー */
-  let html = `<div class="route-block"><div class="route-hdr">
-    ${mkIb(srcName, 68)}
-    <div class="route-info">
-      <div class="route-cat">[${esc(srcCat)}]</div>
-      <div class="route-name">${esc(srcName)}</div>
-      <div class="route-desc">を ★10 まで改修 → 改修更新で入手</div>
-      <div class="route-res">
-        <span style="font-size:10px;color:var(--mt)">基礎資源(1回):</span>
-        ${equip.resource.map((v,i)=>v>0?
-          `<span style="font-size:11px"><span style="color:var(--mt)">${RES_NAMES[i]}</span> <b style="color:var(--wh)">${v}</b></span>`
-        :'').join(' ') || '<span style="font-size:11px;color:var(--mt)">なし</span>'}
-        ${total>1?`<span class="route-badge">ルート ${idx+1} / ${total}</span>`:''}
-      </div>
-    </div>
-  </div>`;
-
-  /* ステップ群 */
-  html += `<div class="steps-wrap">`;
-  let cumRes=[0,0,0,0], cumDev=[0,0], cumImp=[0,0];
-
-  for (let ki=0; ki<stepKeys.length; ki++) {
-    const keyNum  = stepKeys[ki];
-    const nextKey = ki+1<stepKeys.length ? stepKeys[ki+1] : 10;
-    const stepCnt = nextKey - keyNum;
-    const items   = equip.info[String(keyNum)] || [];
-    const filt    = filterForTarget(items, tgtName, G.dayFilter);
-    const rep     = filt.length>0 ? filt[0] : (items[0]||null);
-
-    if (rep) {
-      cumRes = cumRes.map((v,i) => v + (equip.resource[i]||0)*stepCnt);
-      cumDev[0] += rep.kaihatu[0]*stepCnt; cumDev[1] += rep.kaihatu[1]*stepCnt;
-      cumImp[0] += rep.kaisyu[0]*stepCnt;  cumImp[1] += rep.kaisyu[1]*stepCnt;
-    }
-
-    const stepId = `step_${srcName}_${keyNum}_${idx}`.replace(/[^a-zA-Z0-9_]/g,'_');
-    const hasDayMatch = filt.length > 0;
-    const starLbl = keyNum===0 ? `★0 → ★${nextKey}（各 ${stepCnt} 回）` : `★${keyNum} → ★${nextKey}（${stepCnt} 回）`;
-
-    html += `<div class="step-block"><div class="step-card">
-      <div class="step-hdr open" onclick="toggleStep('${stepId}')">
-        <span class="star-badge">${starLbl}</span>
-        <span class="times-badge">x ${stepCnt} 回</span>
-        ${!hasDayMatch&&G.dayFilter>=0?`<span class="warn-badge">選択曜日は実施不可</span>`:''}
-        <span class="step-tog">▶</span>
-      </div>
-      <div class="step-body open" id="${stepId}">`;
-
-    if (filt.length===0 && G.dayFilter>=0) {
-      html += `<div class="nomatch">${DAYS[G.dayFilter]} 曜日では実施できる艦がいません</div>`;
-      html += renderBranchTree(items, equip, stepCnt, cumRes, cumDev, cumImp, false);
-    } else {
-      html += renderBranchTree(filt.length>0?filt:items, equip, stepCnt, cumRes, cumDev, cumImp, true);
-    }
-
-    html += `</div></div></div>`;
-  }
-
-  /* 改修更新ブロック */
-  html += renderUpdateBlock(updateItem, tgtName, srcName, equip, cumRes, cumDev, cumImp);
-
-  /* 素材合計カード */
-  html += renderTotalsCard(equip, tgtName, updateItem);
-
-  html += `</div></div>`;
-  return html;
-}
-
-/* =====================================================
-   枝分かれレシピツリー
-   ===================================================== */
-function renderBranchTree(items, equip, stepCnt, cumRes, cumDev, cumImp, active) {
-  if (!items||!items.length) return `<div class="nomatch">データなし</div>`;
-  const multi = items.length > 1;
-  let html = `<div class="branches">`;
-
-  for (let i=0; i<items.length; i++) {
-    const item = items[i];
-    if (i>0) html += `<div class="branch-or">または</div>`;
-    html += `<div class="branch-item"><div class="recipe-card${active?'':' dim'}">`;
-
-    /* 必要艦艇 */
-    html += `<div class="irow"><span class="ilbl">必要艦艇</span><span class="ival">
-      ${item.ship&&item.ship.length?item.ship.map(s=>shipTag(s)).join(''):'<span style="color:var(--mt)">制限なし</span>'}
-    </span></div>`;
-
-    /* 曜日 */
-    html += `<div class="irow"><span class="ilbl">曜日</span><span class="ival">${renderDays(item.youbi)}</span></div>`;
-
-    /* 素材（展開ボタン付き） */
-    html += `<div class="irow"><span class="ilbl">素材</span><div class="ival">`;
-    if (item.soubi&&item.soubi.length) {
-      for (const [nm,cnt] of item.soubi)
-        html += renderMatEntry(nm, cnt, 0, new Set());
-    } else {
-      html += '<span style="color:var(--mt)">なし</span>';
-    }
-    html += `</div></div>`;
-
-    /* 資源(1回) */
-    const res = equip.resource;
-    html += `<div class="irow"><span class="ilbl">資源(1回)</span><span class="ival"><div class="rg">
-      ${res.map((v,i)=>v>0?`<div class="rb ${RES_KEYS[i]}"><div class="rl">${RES_NAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
-      <div class="rb dev"><div class="rl">開発資材</div><div class="rv">${item.kaihatu[0]}〜${item.kaihatu[1]}</div></div>
-      <div class="rb impr"><div class="rl">改修資材</div><div class="rv">${item.kaisyu[0]}〜${item.kaisyu[1]}</div></div>
-    </div></span></div>`;
-
-    /* 累計 */
-    html += `<div class="cum-row"><div class="cum-lbl">累計（★0 → このステップ完了後）</div>
-    <div class="rg">
-      ${cumRes.map((v,i)=>v>0?`<div class="rb ${RES_KEYS[i]}"><div class="rl">${RES_NAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
-      <div class="rb dev"><div class="rl">開発資材</div><div class="rv">${cumDev[0]}〜${cumDev[1]}</div></div>
-      <div class="rb impr"><div class="rl">改修資材</div><div class="rv">${cumImp[0]}〜${cumImp[1]}</div></div>
-    </div></div>`;
-
-    html += `</div></div>`;
-  }
-  html += `</div>`;
-  return html;
-}
-
-/* =====================================================
-   素材エントリ（画像チップ + 展開ボタン + サブツリー）
-   ===================================================== */
-function renderMatEntry(matName, count, depth, visited) {
-  const inVisited = visited.has(matName);
-  const canExpand = !inVisited && depth < 4 && G.targets.has(matName);
-  const panelId = 'mp' + (_mtCnt++);
-
-  if (canExpand) {
-    const nv = new Set(visited); nv.add(matName);
-    _mtCache[panelId] = { name: matName, depth: depth+1, visited: nv };
-  }
-
-  const imgSrc = equipImgSrc(matName);
-  const depCls = ['','dep1','dep2','dep3'][Math.min(depth,3)];
-
-  let html = `<div class="mat-entry">
-    <span class="mat-chip">
-      <img class="mat-img" src="${imgSrc}" onerror="this.style.display='none'" loading="lazy" alt="${esc(matName)}">
-      <span class="mat-nm">${esc(matName)}</span>
-      <span class="mat-cnt"> x${count}</span>
-      ${canExpand?`<button class="mat-xpnd-btn" onclick="toggleMatPanel('${panelId}',this)">ツリー表示</button>`:''}
-    </span>`;
-
-  if (canExpand) {
-    html += `<div class="mat-st ${depCls}" id="${panelId}"></div>`;
-  }
-
-  html += `</div>`;
-  return html;
-}
-
-/* サブツリートグル */
-function toggleMatPanel(id, btn) {
-  const panel = document.getElementById(id);
-  if (!panel) return;
-  if (panel.classList.contains('open')) {
-    panel.classList.remove('open');
-    btn.textContent = 'ツリー表示';
-    return;
-  }
-  if (!panel.innerHTML) {
-    const c = _mtCache[id];
-    if (c) panel.innerHTML = buildMatSubtreeHTML(c.name, c.depth, c.visited);
-  }
-  panel.classList.add('open');
-  btn.textContent = 'ツリー閉じる';
-}
-
-/* 素材の改修更新ツリーHTMLを構築 */
-function buildMatSubtreeHTML(name, depth, visited) {
-  if (depth > 4)
-    return `<div class="depth-limit">展開制限に達しました（最大4階層）</div>`;
-
-  const sources = G.targets.get(name);
-  if (!sources||!sources.length)
-    return `<div class="nomatch">${esc(name)} は改修更新では入手できません</div>`;
-
-  const nv = new Set(visited); nv.add(name);
-  let html = `<div class="mat-st-title">${esc(name)} の改修更新入手ルート</div>`;
-
-  for (let si=0; si<sources.length; si++) {
-    const { sourceName, sourceCategory, equip, item: updateItem } = sources[si];
-    html += buildSubRouteHTML(sourceName, sourceCategory, equip, name, updateItem, si, sources.length, depth, nv);
-  }
-  return html;
-}
-
-/* サブルートHTML（簡略版ルートブロック） */
-function buildSubRouteHTML(srcName, srcCat, equip, tgtName, updateItem, idx, total, depth, visited) {
-  const stepKeys = Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
-  const imgSrc = equipImgSrc(srcName);
-
-  let html = `<div class="sub-route">
-    <div class="sub-route-hdr">
-      <img width="36" height="36" src="${imgSrc}"
-        onerror="this.style.display='none'"
-        style="object-fit:contain;image-rendering:pixelated;border-radius:3px;background:rgba(0,0,0,.3);flex-shrink:0"
-        loading="lazy" alt="${esc(srcName)}">
-      <div>
-        <div class="sub-src-cat">[${esc(srcCat)}]</div>
-        <div class="sub-src-nm">${esc(srcName)}</div>
-      </div>
-      ${total>1?`<span class="route-badge" style="margin-left:auto">ルート${idx+1}/${total}</span>`:''}
-    </div>
-    <div class="sub-body">`;
-
-  for (let ki=0; ki<stepKeys.length; ki++) {
-    const keyNum  = stepKeys[ki];
-    const nextKey = ki+1<stepKeys.length ? stepKeys[ki+1] : 10;
-    const stepCnt = nextKey - keyNum;
-    const items   = equip.info[String(keyNum)] || [];
-    const rep     = items[0];
-    if (!rep) continue;
-
-    const starLbl = keyNum===0 ? `★0〜★${nextKey}（${stepCnt}回）` : `★${keyNum}〜★${nextKey}（${stepCnt}回）`;
-
-    html += `<div class="sub-step">
-      <div class="sub-step-lbl">${starLbl}</div>
-      <div class="irow" style="margin-bottom:3px">
-        <span class="ilbl">素材</span>
-        <div>`;
-    if (rep.soubi&&rep.soubi.length) {
-      for (const [nm,cnt] of rep.soubi)
-        html += renderMatEntry(nm, cnt*stepCnt, depth, visited);
-    } else {
-      html += '<span style="color:var(--mt);font-size:11px">なし</span>';
-    }
-    html += `</div></div>`;
-
-    const res = equip.resource || [0,0,0,0];
-    html += `<div class="irow">
-      <span class="ilbl">資源</span>
-      <div class="rg">
-        ${res.map((v,i)=>v>0?`<div class="rb ${RES_KEYS[i]}"><div class="rl">${RES_NAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
-        <div class="rb dev"><div class="rl">開発</div><div class="rv">${rep.kaihatu[0]}-${rep.kaihatu[1]}</div></div>
-        <div class="rb impr"><div class="rl">改修</div><div class="rv">${rep.kaisyu[0]}-${rep.kaisyu[1]}</div></div>
+  let h=`<div class="route-block">
+    <div class="route-hdr">
+      ${mkIb(srcNm,70,70)}
+      <div class="route-info">
+        <div class="route-cat">[${esc(srcCat)}]</div>
+        <div class="route-name">${esc(srcNm)}</div>
+        <div class="route-desc">を ★10 まで改修 → 改修更新</div>
+        <div class="res-inline">
+          <span class="ri-item"><span class="ri-lbl">基礎資源(1回):</span></span>
+          ${equip.resource.map((v,i)=>v>0?
+            `<span class="ri-item"><span class="ri-lbl">${RES_NAMES[i]}</span> <span class="ri-val">${v}</span></span>`
+          :'').join(' ') || '<span style="font-size:11px;color:var(--mt)">なし</span>'}
+          ${total>1?`<span class="route-num-badge">ルート ${idx+1}/${total}</span>`:''}
+        </div>
       </div>
     </div>`;
 
-    html += `</div>`;
+  /* ステップツリー */
+  h+=`<div class="step-tree">`;
+  let cumRes=[0,0,0,0],cumDev=[0,0],cumImp=[0,0];
+
+  for(let ki=0;ki<stepKeys.length;ki++){
+    const kNum  =stepKeys[ki];
+    const nKey  =ki+1<stepKeys.length?stepKeys[ki+1]:10;
+    const sCnt  =nKey-kNum;
+    const items =equip.info[String(kNum)]||[];
+    const filt  =filtForTgt(items,tgtNm,G.dayFilter);
+    const rep   =filt.length>0?filt[0]:(items[0]||null);
+
+    if(rep){
+      cumRes=cumRes.map((v,i)=>v+(equip.resource[i]||0)*sCnt);
+      cumDev[0]+=rep.kaihatu[0]*sCnt; cumDev[1]+=rep.kaihatu[1]*sCnt;
+      cumImp[0]+=rep.kaisyu[0]*sCnt;  cumImp[1]+=rep.kaisyu[1]*sCnt;
+    }
+
+    const sId=`step_${srcNm}_${kNum}_${idx}`.replace(/[^a-zA-Z0-9_]/g,'_');
+    const hasDM=filt.length>0;
+    const slbl=kNum===0?`★0 → ★${nKey}（各 ${sCnt} 回）`:`★${kNum} → ★${nKey}（${sCnt} 回）`;
+
+    h+=`<div class="step-node"><div class="step-card">
+      <div class="step-card-hdr open" onclick="toggleStep('${sId}')">
+        <span class="star-badge">${slbl}</span>
+        <span class="cnt-badge">x${sCnt}</span>
+        ${!hasDM&&G.dayFilter>=0?`<span class="no-day-badge">${DAYS[G.dayFilter]}曜日は実施不可</span>`:''}
+        <span class="step-toggle">▶</span>
+      </div>
+      <div class="step-card-body open" id="${sId}">`;
+
+    if(filt.length===0&&G.dayFilter>=0){
+      h+=`<div class="no-data">${DAYS[G.dayFilter]} 曜日では実施できる艦がいません</div>`;
+      h+=buildRecipeFork(items,equip,sCnt,cumRes,cumDev,cumImp,false);
+    }else{
+      h+=buildRecipeFork(filt.length>0?filt:items,equip,sCnt,cumRes,cumDev,cumImp,true);
+    }
+
+    h+=`</div></div></div>`;
   }
 
-  /* 改修更新 */
-  html += `<div class="sub-step" style="border-left-color:rgba(196,146,48,.5)">
-    <div class="sub-step-lbl" style="color:var(--gd)">★10 改修更新 → ${esc(tgtName)}</div>
-    <div class="irow">
-      <span class="ilbl">更新素材</span>
-      <div>`;
-  if (updateItem.soubi&&updateItem.soubi.length) {
-    for (const [nm,cnt] of updateItem.soubi)
-      html += renderMatEntry(nm, cnt, depth, visited);
-  } else {
-    html += '<span style="color:var(--mt);font-size:11px">なし</span>';
-  }
-  html += `</div></div></div>`;
+  /* 改修更新ノード */
+  h+=buildUpdateNode(updItem,tgtNm,equip,cumRes,cumDev,cumImp);
+  h+=`</div>`;
 
-  html += `</div></div>`;
-  return html;
+  /* 素材合計カード */
+  h+=buildTotalsCard(equip,tgtNm,updItem);
+
+  h+=`</div>`;
+  return h;
 }
 
 /* =====================================================
-   ★10 改修更新ブロック
+   レシピ分岐ツリー
    ===================================================== */
-function renderUpdateBlock(updateItem, tgtName, srcName, equip, cumRes, cumDev, cumImp) {
-  const dayOk = G.dayFilter<0 || (updateItem.youbi&&updateItem.youbi[G.dayFilter]===1);
-  const fRes  = cumRes.map((v,i) => v+(equip.resource[i]||0));
-  const fDev  = [cumDev[0]+updateItem.kaihatu[0], cumDev[1]+updateItem.kaihatu[1]];
-  const fImp  = [cumImp[0]+updateItem.kaisyu[0],  cumImp[1]+updateItem.kaisyu[1]];
-  const tgtSrc= equipImgSrc(tgtName);
+function buildRecipeFork(items,equip,sCnt,cumRes,cumDev,cumImp,active){
+  if(!items||!items.length) return `<div class="no-data">データなし</div>`;
+  let h=`<div class="recipe-fork">`;
+  for(let i=0;i<items.length;i++){
+    const item=items[i];
+    if(i>0) h+=`<div class="or-divider">または</div>`;
+    h+=`<div class="recipe-branch"><div class="recipe-card${active?'':' dimmed'}">`;
 
-  return `<div class="update-block" style="${dayOk||G.dayFilter<0?'':'opacity:.6'}">
+    /* 必要艦艇 */
+    h+=`<div class="irow"><span class="ilbl">必要艦艇</span><div class="ival">
+      ${item.ship&&item.ship.length
+        ? `<div class="ship-tags">${item.ship.map(s=>shipChip(s)).join('')}</div>`
+        : '<span style="color:var(--mt)">制限なし</span>'}
+    </div></div>`;
+
+    /* 曜日 */
+    h+=`<div class="irow"><span class="ilbl">曜日</span><span class="ival">${renderDays(item.youbi)}</span></div>`;
+
+    /* 素材（インライン展開付き） */
+    h+=`<div class="irow"><span class="ilbl">素材</span><div class="ival">`;
+    if(item.soubi&&item.soubi.length){
+      h+=`<div class="mat-row">`;
+      for(const[nm,cnt] of item.soubi)
+        h+=buildMatEntry(nm,cnt,0,new Set());
+      h+=`</div>`;
+    }else{
+      h+=`<span style="color:var(--mt)">なし</span>`;
+    }
+    h+=`</div></div>`;
+
+    /* 資源（1回）
+       kaihatu=[通常,確実化], kaisyu=[通常,確実化] */
+    const res=equip.resource;
+    h+=`<div class="irow"><span class="ilbl">資源(1回)</span><span class="ival"><div class="rg">
+      ${res.map((v,i)=>v>0?resBx(RES_NAMES[i],v,v,RES_COLS[i],false):'').join('')}
+      ${resBx('開発資材',item.kaihatu[0],item.kaihatu[1],'c-dev',false)}
+      ${resBx('改修資材',item.kaisyu[0],item.kaisyu[1],'c-imp',false)}
+    </div></span></div>`;
+
+    /* 累計 */
+    h+=`<div class="cum-blk"><div class="cum-lbl">累計（★0 → このステップ完了後）</div>
+    <div class="rg">
+      ${cumRes.map((v,i)=>v>0?resBx(RES_NAMES[i],v,v,RES_COLS[i],false):'').join('')}
+      ${resBx('開発資材',cumDev[0],cumDev[1],'c-dev',false)}
+      ${resBx('改修資材',cumImp[0],cumImp[1],'c-imp',false)}
+    </div></div>`;
+
+    h+=`</div></div>`;
+  }
+  h+=`</div>`;
+  return h;
+}
+
+/* =====================================================
+   素材エントリ（インライン展開ツリー付き）
+   ===================================================== */
+function buildMatEntry(matNm,cnt,depth,visited){
+  const canExpand=!visited.has(matNm) && depth<4 && G.targets.has(matNm);
+  const upTag=canExpand?`<span class="mat-up-tag">改修更新可</span>`:'';
+
+  let h=`<div>
+    <span class="mat-chip">
+      <img class="mat-img" src="${equipImg(matNm)}"
+           onerror="this.style.display='none'" loading="lazy" alt="${esc(matNm)}">
+      <span class="mat-name">${esc(matNm)}</span>
+      <span class="mat-cnt"> x${cnt}</span>${upTag}
+    </span>`;
+
+  if(canExpand){
+    const nv=new Set(visited); nv.add(matNm);
+    h+=buildMatSubTree(matNm,depth,nv);
+  }
+
+  h+=`</div>`;
+  return h;
+}
+
+/* 素材のサブツリー（改修更新チェーン） */
+function buildMatSubTree(nm,depth,visited){
+  if(depth>=4) return `<div class="depth-lim">展開上限（4階層）</div>`;
+  const depCls=['dep0','dep1','dep2','dep3'][Math.min(depth,3)];
+  const srcs=G.targets.get(nm);
+  if(!srcs||!srcs.length) return '';
+
+  const nv=new Set(visited); nv.add(nm);
+  let h=`<div class="mat-tree ${depCls}">
+    <div class="mat-tree-ttl">${esc(nm)} の入手方法（改修更新）</div>`;
+
+  for(let si=0;si<srcs.length;si++){
+    const{sourceName,sourceCategory,equip,item:updItem}=srcs[si];
+    h+=buildSubRoute(sourceName,sourceCategory,equip,nm,updItem,si,srcs.length,depth+1,nv);
+  }
+  h+=`</div>`;
+  return h;
+}
+
+/* サブルート（素材の改修更新ルート） */
+function buildSubRoute(srcNm,srcCat,equip,tgtNm,updItem,idx,total,depth,visited){
+  const stepKeys=Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
+  const imgSrc=equipImg(srcNm);
+
+  let h=`<div class="sub-route">
+    <div class="sub-route-hdr">
+      <img src="${imgSrc}" alt="${esc(srcNm)}" loading="lazy"
+           onerror="this.style.display='none'">
+      <div>
+        <div class="sub-src-cat">[${esc(srcCat)}]</div>
+        <div class="sub-src-nm">${esc(srcNm)}</div>
+      </div>
+      ${total>1?`<span class="route-num-badge" style="margin-left:auto">ルート${idx+1}/${total}</span>`:''}
+    </div>
+    <div class="sub-body">`;
+
+  for(let ki=0;ki<stepKeys.length;ki++){
+    const kNum  =stepKeys[ki];
+    const nKey  =ki+1<stepKeys.length?stepKeys[ki+1]:10;
+    const sCnt  =nKey-kNum;
+    const items =equip.info[String(kNum)]||[];
+    const rep   =items[0];
+    if(!rep) continue;
+    const slbl=kNum===0?`★0〜★${nKey}（${sCnt}回）`:`★${kNum}〜★${nKey}（${sCnt}回）`;
+
+    h+=`<div class="sub-step">
+      <div class="sub-step-lbl">${slbl}</div>
+      <div class="irow" style="margin-bottom:3px">
+        <span class="ilbl">素材</span>
+        <div>`;
+    if(rep.soubi&&rep.soubi.length){
+      for(const[nm,cnt] of rep.soubi){
+        if(nm===srcNm) continue; /* 自己参照スキップ */
+        h+=buildMatEntry(nm,cnt*sCnt,depth,visited);
+      }
+    }else{
+      h+=`<span style="color:var(--mt);font-size:11px">なし</span>`;
+    }
+    h+=`</div></div>`;
+
+    const res=equip.resource||[0,0,0,0];
+    h+=`<div class="irow"><span class="ilbl">資源</span><div class="rg">
+      ${res.map((v,i)=>v>0?resBx(RES_NAMES[i],v,v,RES_COLS[i],false):'').join('')}
+      ${resBx('開発',rep.kaihatu[0],rep.kaihatu[1],'c-dev',false)}
+      ${resBx('改修',rep.kaisyu[0],rep.kaisyu[1],'c-imp',false)}
+    </div></div>`;
+    h+=`</div>`;
+  }
+
+  /* 改修更新行 */
+  h+=`<div class="sub-step" style="border-left-color:rgba(184,144,48,.5)">
+    <div class="sub-step-lbl" style="color:var(--gd2)">★10 改修更新 → ${esc(tgtNm)}</div>
+    <div class="irow">
+      <span class="ilbl">更新素材</span>
+      <div>`;
+  if(updItem.soubi&&updItem.soubi.length){
+    for(const[nm,cnt] of updItem.soubi)
+      h+=buildMatEntry(nm,cnt,depth,visited);
+  }else{
+    h+=`<span style="color:var(--mt);font-size:11px">なし</span>`;
+  }
+  h+=`</div></div>
+    ${resBx('開発資材',updItem.kaihatu[0],updItem.kaihatu[1],'c-dev',false)}
+    ${resBx('改修資材',updItem.kaisyu[0],updItem.kaisyu[1],'c-imp',false)}
+  </div>`;
+
+  h+=`</div></div>`;
+  return h;
+}
+
+/* =====================================================
+   改修更新ノード（★10 → 目標装備）
+   ===================================================== */
+function buildUpdateNode(updItem,tgtNm,equip,cumRes,cumDev,cumImp){
+  const dayOk=G.dayFilter<0||(updItem.youbi&&updItem.youbi[G.dayFilter]===1);
+  const fRes=cumRes.map((v,i)=>v+(equip.resource[i]||0));
+  const fDev=[cumDev[0]+updItem.kaihatu[0], cumDev[1]+updItem.kaihatu[1]];
+  const fImp=[cumImp[0]+updItem.kaisyu[0],  cumImp[1]+updItem.kaisyu[1]];
+  const tSrc=equipImg(tgtNm);
+
+  return `<div class="update-node"><div class="update-card"${dayOk||G.dayFilter<0?'':' style="opacity:.55"'}>
     <div class="uc-hdr">
       <span class="uc-star">★10 改修更新</span>
       <span class="uc-arrow">→</span>
-      <div class="uc-result">
-        <img class="uc-result-img" src="${tgtSrc}" onerror="this.style.display='none'" alt="${esc(tgtName)}">
-        <span class="uc-result-nm">${esc(tgtName)}</span>
+      <div class="uc-res">
+        <img class="uc-res-img" src="${tSrc}" alt="${esc(tgtNm)}"
+             onerror="this.style.display='none'" loading="lazy">
+        <span class="uc-res-nm">${esc(tgtNm)}</span>
       </div>
       ${!dayOk&&G.dayFilter>=0?`<span class="uc-warn">${DAYS[G.dayFilter]} 曜日は実施不可</span>`:''}
     </div>
 
     <div class="irow">
       <span class="ilbl">必要艦艇</span>
-      <span>${updateItem.ship&&updateItem.ship.length?updateItem.ship.map(s=>shipTag(s)).join(''):'<span style="color:var(--mt)">制限なし</span>'}</span>
+      <div class="ival">
+        ${updItem.ship&&updItem.ship.length
+          ?`<div class="ship-tags">${updItem.ship.map(s=>shipChip(s)).join('')}</div>`
+          :'<span style="color:var(--mt)">制限なし</span>'}
+      </div>
     </div>
     <div class="irow">
       <span class="ilbl">曜日</span>
-      <span>${renderDays(updateItem.youbi)}</span>
+      <span class="ival">${renderDays(updItem.youbi)}</span>
     </div>
     <div class="irow">
       <span class="ilbl">更新素材</span>
-      <div>${updateItem.soubi&&updateItem.soubi.length
-        ? updateItem.soubi.map(([nm,cnt])=>renderMatEntry(nm,cnt,0,new Set())).join('')
-        : '<span style="color:var(--mt)">なし</span>'
-      }</div>
+      <div class="ival">
+        ${updItem.soubi&&updItem.soubi.length
+          ?`<div class="mat-row">${updItem.soubi.map(([nm,cnt])=>buildMatEntry(nm,cnt,0,new Set())).join('')}</div>`
+          :'<span style="color:var(--mt)">なし</span>'}
+      </div>
     </div>
     <div class="irow">
       <span class="ilbl">資材(更新)</span>
-      <span><div class="rg">
-        ${equip.resource.map((v,i)=>v>0?`<div class="rb ${RES_KEYS[i]}"><div class="rl">${RES_NAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
-        <div class="rb dev"><div class="rl">開発資材</div><div class="rv">${updateItem.kaihatu[0]}〜${updateItem.kaihatu[1]}</div></div>
-        <div class="rb impr"><div class="rl">改修資材</div><div class="rv">${updateItem.kaisyu[0]}〜${updateItem.kaisyu[1]}</div></div>
+      <span class="ival"><div class="rg">
+        ${equip.resource.map((v,i)=>v>0?resBx(RES_NAMES[i],v,v,RES_COLS[i],false):'').join('')}
+        ${resBx('開発資材',updItem.kaihatu[0],updItem.kaihatu[1],'c-dev',false)}
+        ${resBx('改修資材',updItem.kaisyu[0],updItem.kaisyu[1],'c-imp',false)}
       </div></span>
     </div>
 
-    <div class="cum-row">
-      <div class="cum-lbl">総計（★0 → 改修更新完了まで全て込み）</div>
+    <div class="cum-blk">
+      <div class="cum-lbl">総計（★0 → 改修更新完了まで全て）</div>
       <div class="rg">
-        ${fRes.map((v,i)=>v>0?`<div class="rb ${RES_KEYS[i]} gld"><div class="rl">${RES_NAMES[i]}</div><div class="rv">${v}</div></div>`:'').join('')}
-        <div class="rb dev gld"><div class="rl">開発資材</div><div class="rv">${fDev[0]}〜${fDev[1]}</div></div>
-        <div class="rb impr gld"><div class="rl">改修資材</div><div class="rv">${fImp[0]}〜${fImp[1]}</div></div>
+        ${fRes.map((v,i)=>v>0?resBx(RES_NAMES[i],v,v,RES_COLS[i],true):'').join('')}
+        ${resBx('開発資材',fDev[0],fDev[1],'c-dev',true)}
+        ${resBx('改修資材',fImp[0],fImp[1],'c-imp',true)}
       </div>
+    </div>
+  </div></div>`;
+}
+
+/* =====================================================
+   素材合計カード（ルート全体の最終アイテム数）
+   ===================================================== */
+function buildTotalsCard(equip,tgtNm,updItem){
+  const tot={};
+  const add=(nm,cnt)=>{tot[nm]=(tot[nm]||0)+cnt;};
+  const stepKeys=Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
+  for(let ki=0;ki<stepKeys.length;ki++){
+    const kNum=stepKeys[ki];
+    const nKey=ki+1<stepKeys.length?stepKeys[ki+1]:10;
+    const sCnt=nKey-kNum;
+    const items=equip.info[String(kNum)]||[];
+    const rep=items[0];
+    if(rep) for(const[nm,cnt] of (rep.soubi||[])) add(nm,cnt*sCnt);
+  }
+  for(const[nm,cnt] of (updItem.soubi||[])) add(nm,cnt);
+  if(!Object.keys(tot).length) return '';
+
+  return `<div class="totals-card">
+    <div class="totals-ttl">最終素材一覧（★0 → ★10 改修 + 改修更新　合計数）</div>
+    <div class="totals-grid">
+      ${Object.entries(tot).sort().map(([nm,cnt])=>{
+        const canUp=G.targets.has(nm);
+        return `<div class="total-chip">
+          <img src="${equipImg(nm)}" onerror="this.style.display='none'" loading="lazy" alt="${esc(nm)}">
+          <span>${esc(nm)}</span>
+          <span class="total-cnt">x${cnt}</span>
+          ${canUp?`<span class="up-mark">[更新可]</span>`:''}
+        </div>`;
+      }).join('')}
     </div>
   </div>`;
 }
 
 /* =====================================================
-   素材合計カード（樹形図最終アイテム数）
+   ステップ折りたたみ
    ===================================================== */
-function renderTotalsCard(equip, tgtName, updateItem) {
-  const totals = {};
-  const add = (nm, cnt) => { totals[nm] = (totals[nm]||0) + cnt; };
-
-  const stepKeys = Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
-  for (let ki=0; ki<stepKeys.length; ki++) {
-    const keyNum  = stepKeys[ki];
-    const nextKey = ki+1<stepKeys.length ? stepKeys[ki+1] : 10;
-    const stepCnt = nextKey - keyNum;
-    const items   = equip.info[String(keyNum)] || [];
-    const rep     = items[0];
-    if (rep) for (const [nm,cnt] of (rep.soubi||[])) add(nm, cnt*stepCnt);
-  }
-  for (const [nm,cnt] of (updateItem.soubi||[])) add(nm, cnt);
-
-  if (!Object.keys(totals).length) return '';
-
-  let html = `<div class="totals-card">
-    <div class="totals-title">最終素材一覧（改修 ★0→★10 + 改修更新　合計）</div>
-    <div class="totals-grid">`;
-  for (const [nm, cnt] of Object.entries(totals).sort()) {
-    const canUp = G.targets.has(nm);
-    html += `<div class="total-item">
-      <img src="${equipImgSrc(nm)}" onerror="this.style.display='none'" loading="lazy" alt="${esc(nm)}">
-      <span>${esc(nm)}</span>
-      <span class="total-cnt">x${cnt}</span>
-      ${canUp?`<span style="font-size:9px;color:var(--ac);margin-left:3px">[改修更新可]</span>`:''}
-    </div>`;
-  }
-  html += `</div></div>`;
-  return html;
+function toggleStep(id){
+  const el=document.getElementById(id);
+  const hdr=el?el.previousElementSibling:null;
+  if(!el) return;
+  const open=el.classList.contains('open');
+  el.classList.toggle('open',!open);
+  if(hdr){hdr.classList.toggle('open',!open);}
 }
 
 /* =====================================================
    統計計算
    ===================================================== */
-function calcTotalCost(equip, tgtName) {
-  const stepKeys = Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
-  const res = equip.resource || [0,0,0,0];
-  let totalRes=[0,0,0,0]; const soubiTotals={}; let dMin=0,dMax=0,iMin=0,iMax=0;
-
-  for (let ki=0; ki<stepKeys.length; ki++) {
-    const keyNum  = stepKeys[ki];
-    const nextKey = ki+1<stepKeys.length ? stepKeys[ki+1] : 10;
-    const cnt     = nextKey - keyNum;
-    const items   = equip.info[String(keyNum)] || [];
-    const rel     = filterForTarget(items, tgtName, -1);
-    const item    = rel.length>0 ? rel[0] : (items[0]||null);
-    totalRes = totalRes.map((v,i) => v + res[i]*cnt);
-    if (item) {
-      dMin += item.kaihatu[0]*cnt; dMax += item.kaihatu[1]*cnt;
-      iMin += item.kaisyu[0]*cnt;  iMax += item.kaisyu[1]*cnt;
-      for (const [sn,sc] of (item.soubi||[]))
-        soubiTotals[sn] = (soubiTotals[sn]||0) + sc*cnt;
+function calcCost(equip,tgtNm){
+  const stepKeys=Object.keys(equip.info).filter(k=>k!=='10').map(Number).sort((a,b)=>a-b);
+  const res=equip.resource||[0,0,0,0];
+  let totalRes=[0,0,0,0]; const soubiTot={}; let dMin=0,dMax=0,iMin=0,iMax=0;
+  for(let ki=0;ki<stepKeys.length;ki++){
+    const kNum=stepKeys[ki];
+    const nKey=ki+1<stepKeys.length?stepKeys[ki+1]:10;
+    const cnt=nKey-kNum;
+    const items=equip.info[String(kNum)]||[];
+    const rel=filtForTgt(items,tgtNm,-1);
+    const it=rel.length>0?rel[0]:(items[0]||null);
+    totalRes=totalRes.map((v,i)=>v+res[i]*cnt);
+    if(it){
+      dMin+=it.kaihatu[0]*cnt; dMax+=it.kaihatu[1]*cnt;
+      iMin+=it.kaisyu[0]*cnt;  iMax+=it.kaisyu[1]*cnt;
+      for(const[sn,sc] of (it.soubi||[])) soubiTot[sn]=(soubiTot[sn]||0)+sc*cnt;
     }
   }
-  for (const it of (equip.info['10']||[]).filter(it=>it.result===tgtName)) {
-    totalRes = totalRes.map((v,i) => v+res[i]);
-    dMin += it.kaihatu[0]; dMax += it.kaihatu[1];
-    iMin += it.kaisyu[0];  iMax += it.kaisyu[1];
-    for (const [sn,sc] of (it.soubi||[])) soubiTotals[sn]=(soubiTotals[sn]||0)+sc;
+  for(const it of (equip.info['10']||[]).filter(it=>it.result===tgtNm)){
+    totalRes=totalRes.map((v,i)=>v+res[i]);
+    dMin+=it.kaihatu[0]; dMax+=it.kaihatu[1];
+    iMin+=it.kaisyu[0];  iMax+=it.kaisyu[1];
+    for(const[sn,sc] of (it.soubi||[])) soubiTot[sn]=(soubiTot[sn]||0)+sc;
   }
-  return { res:totalRes, soubiTotals, devMin:dMin, devMax:dMax, impMin:iMin, impMax:iMax };
+  return{res:totalRes,soubiTotals:soubiTot,devMin:dMin,devMax:dMax,impMin:iMin,impMax:iMax};
 }
 
-function collectAllShips(equip, tgtName) {
-  const ships = new Set();
-  for (const [ks, items] of Object.entries(equip.info)) {
-    for (const item of items) {
-      if (ks==='10' && item.result!==tgtName) continue;
-      if (item.result!==tgtName && item.result!==null && ks!=='10') continue;
-      for (const s of (item.ship||[])) ships.add(s);
+function collectShips(equip,tgtNm){
+  const ships=new Set();
+  for(const[ks,items] of Object.entries(equip.info)){
+    for(const it of items){
+      if(ks==='10'&&it.result!==tgtNm) continue;
+      if(it.result!==tgtNm&&it.result!==null&&ks!=='10') continue;
+      for(const s of (it.ship||[])) ships.add(s);
     }
   }
   return Array.from(ships);
 }
 
 /* =====================================================
-   ステップ折りたたみ
-   ===================================================== */
-function toggleStep(id) {
-  const el  = document.getElementById(id);
-  const hdr = el ? el.previousElementSibling : null;
-  if (!el) return;
-  const open = el.classList.contains('open');
-  el.classList.toggle('open', !open);
-  if (hdr) hdr.classList.toggle('open', !open);
-}
-
-/* =====================================================
    ユーティリティ
    ===================================================== */
-function filterForTarget(items, tgtName, dayIdx) {
-  let f = items.filter(it => it.result===tgtName || it.result===null);
-  if (!f.length) f = items;
-  if (dayIdx>=0) f = f.filter(it => it.youbi && it.youbi[dayIdx]===1);
+function filtForTgt(items,tgtNm,dayIdx){
+  let f=items.filter(it=>it.result===tgtNm||it.result===null);
+  if(!f.length) f=items;
+  if(dayIdx>=0) f=f.filter(it=>it.youbi&&it.youbi[dayIdx]===1);
   return f;
 }
 
-function renderDays(youbi) {
-  if (!youbi||youbi.length<7) return '<span style="color:var(--mt)">不明</span>';
-  return DAYS.map((d,i) => {
-    const on = youbi[i]===1, wknd = i===0||i===6;
-    return `<span class="dpill ${on?'on':'off'} ${on&&wknd?'wknd':''}">${d}</span>`;
+function renderDays(youbi){
+  if(!youbi||youbi.length<7) return '<span style="color:var(--mt)">不明</span>';
+  return DAYS.map((d,i)=>{
+    const on=youbi[i]===1, wk=(i===0||i===6)&&on;
+    return `<span class="dpill ${on?'on':'off'} ${wk?'wk':''}">${d}</span>`;
   }).join('');
 }
 
-function esc(s) {
+function esc(s){
   return String(s)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
